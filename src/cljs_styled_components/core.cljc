@@ -65,10 +65,10 @@
                        (nil? orig-children) {}
                        :else orig-props)
                clj-props (or (:clj props) {})
-               react-props (clj->js (assoc (dissoc props :clj) :className component-name))
-               ;; We place the clj props under their own key so the styled component callbacks can be passed
-               ;; a clojure map instead of a JS object.
-               react-props (goog.object/set react-props "clj-props" clj-props)]
+               react-props (clj->js (assoc (dissoc props :clj) :className component-name))]
+           ;; We place the clj props under their own key so the styled component callbacks can be passed
+           ;; a clojure map instead of a JS object.
+           (goog.object/set react-props "clj-props" clj-props)
            (apply react/createElement
                   class
                   react-props
