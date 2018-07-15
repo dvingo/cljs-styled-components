@@ -8,28 +8,6 @@ ClojureScript maps.
 It's mostly a lightweight transformation from ClojureScript maps to the form
 that a template literal gets invoked with.
 
-In JS:
-
-```js
-const aVar = 'good';
-
-// These are equivalent:
-fn`this is a ${aVar} day`;
-fn([ 'this is a ', ' day' ], aVar);
-```
-
-So you could use styled components from ClojureScript directly by using the second
-form, but this library is an experiment in making it a bit nicer to work with
-from ClojureScript.
-
-You can read more about template literals here:
-
-https://www.styled-components.com/docs/advanced#tagged-template-literals
-
-and here:
-
-https://mxstbr.blog/2016/11/styled-components-magic-explained/
-
 # Installation
 
 This library will require "styled-components" from node_modules.
@@ -167,7 +145,7 @@ Example using JS data structures:
 (example2 {:color "blue"})
 
 (defstyled example :div
-           {:color #(goog.object/get "color" %)})
+           {:color #(goog.object/get % "color")})
 ```
 
 ## Theme support
@@ -284,12 +262,55 @@ a vector:
    :sytled/mixins (hideText)})
 ```
 
-You could potentially also just:
+Sometime after adding support for the above I realized you could also just:
 
+```clojure
 (defstyled my-component :div
   (merge
     (js->clj (position "absolute" "-22px" "5px" "5px" "4px"))
     {:color "blue"}))
+
+the followin doesn't work yet:
+
+(defstyled mixme :section
+  (merge
+    (js->clj
+      #js[(position "absolute" "-22px" "5px" "5px" "4px")
+          (transitions "opacity 0.5s ease-in 0s")
+          (size "40px" "300px")
+          (borderStyle "solid" "dashed" "dotted" "double")])
+     {:background-color "lightblue"
+      :opacity 1
+      :font-size (em "16px")
+      ":hover" {:opacity 0.5}}))
+```
+
+Because the keys come out as camelCase (e.g.: borderTopStyle), but support for
+that should be possible.
+
+# Implementation notes
+
+In JS:
+
+```js
+const aVar = 'good';
+
+// These are equivalent:
+fn`this is a ${aVar} day`;
+fn([ 'this is a ', ' day' ], aVar);
+```
+
+So you could use styled components from ClojureScript directly by using the second
+form, but this library is an experiment in making it a bit nicer to work with
+from ClojureScript.
+
+You can read more about template literals here:
+
+https://www.styled-components.com/docs/advanced#tagged-template-literals
+
+and here:
+
+https://mxstbr.blog/2016/11/styled-components-magic-explained/
 
 # License
 

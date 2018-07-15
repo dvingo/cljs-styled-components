@@ -116,6 +116,21 @@
       (dom/div {:style {:position "relative"}}
                (mixme " hi ")))
 
+
+(defstyled mixme2 :section
+           (apply merge
+                  (js->clj
+                    #js[(position "absolute" "-22px" "5px" "5px" "4px")
+                        (transitions "opacity 0.5s ease-in 0s")
+                        (size "40px" "300px")
+                        (borderStyle "solid" "dashed" "dotted" "double")]
+
+                    {:background-color "lightblue"
+                     :opacity          1
+                     :font-size        (em "16px")
+                     ":hover"          {:opacity 0.5}} :keywordize-keys true)) )
+
+
 (defstyled img
            :div
            {:background-image "url(img.png)"
@@ -133,4 +148,6 @@
 ;(defcard animation (animation " hello "))
 (defcard mixins (mixins))
 (defcard mixins2 (dom/div (img "some text")))
+(defcard mixins3
+         (dom/div (mixme2 "some text")))
 
