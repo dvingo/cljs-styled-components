@@ -23,7 +23,7 @@ npm i -D styled-components
 Then specify this library as a dependency:
 
 ```clj
-[cljs-styled-components "0.1.0-SNAPSHOT"]
+[cljs-styled-components "0.1.0"]
 ```
 
 # Usage
@@ -308,6 +308,14 @@ https://www.styled-components.com/docs/advanced#tagged-template-literals
 and here:
 
 https://mxstbr.blog/2016/11/styled-components-magic-explained/
+
+# Running tests
+
+```bash
+yarn shadow-cljs compile test
+
+node resources/public/js/test/tests.js
+```
 
 # License
 

@@ -12,7 +12,7 @@ pom.xml
 pom.xml.asc
 resources/public/js/main
 resources/public/js/cards
-resources/public/js/test/js
+resources/public/js/test
 target
 out
 package-lock.json

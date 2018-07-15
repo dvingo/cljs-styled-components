@@ -11,5 +11,5 @@
                                         :http-root  "resources/public"
                                         :http-port  8023}}
           :test {:target :node-test
-                 :output-to "resources/public/js/tests.js"
+                 :output-to "resources/public/js/test/tests.js"
                   }}}
