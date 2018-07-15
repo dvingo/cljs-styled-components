@@ -1,4 +1,4 @@
-(defproject cljs-styled-components "0.1.0"
+(defproject cljs-styled-components "0.1.1"
   :description "ClojureScript interface to styled-components"
   :url "http://github.com/dvingo/cljs-styled-components"
   :license {:name "MIT"
