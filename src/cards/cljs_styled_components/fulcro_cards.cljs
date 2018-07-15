@@ -117,25 +117,24 @@
                (mixme " hi ")))
 
 
-(defstyled mixme2 :section
-           (apply merge
-                  (js->clj
-                    #js[(position "absolute" "-22px" "5px" "5px" "4px")
-                        (transitions "opacity 0.5s ease-in 0s")
-                        (size "40px" "300px")
-                        (borderStyle "solid" "dashed" "dotted" "double")]
+(defstyled
+  mixme2 :section
+  (apply merge
+         (js->clj
+           #js[(position "absolute" "-22px" "5px" "5px" "4px")
+               (transitions "opacity 0.5s ease-in 0s")
+               (size "40px" "300px")
+               (borderStyle "solid" "dashed" "dotted" "double")]
+           {:background-color "lightblue"
+            :opacity          1
+            :font-size        (em "16px")
+            ":hover"          {:opacity 0.5}})))
 
-                    {:background-color "lightblue"
-                     :opacity          1
-                     :font-size        (em "16px")
-                     ":hover"          {:opacity 0.5}} :keywordize-keys true)) )
-
-
-(defstyled img
-           :div
-           {:background-image "url(img.png)"
-            :styled/mixins (hideText)})
-
+;(defstyled img
+;           :div
+;           {:background-image "url(img.png)"
+;            :styled/mixins (hideText)})
+;(defcard mixins2 (dom/div (img "some text")))
 
 ;(defcard testing-1 (example-1) {})
 ;(defcard testing-2 (example-2) {})
@@ -147,7 +146,6 @@
 ;(defcard testing-9 (example-9) {})
 ;(defcard animation (animation " hello "))
 (defcard mixins (mixins))
-(defcard mixins2 (dom/div (img "some text")))
 (defcard mixins3
          (dom/div (mixme2 "some text")))
 

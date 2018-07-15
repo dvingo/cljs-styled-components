@@ -270,23 +270,20 @@ Sometime after adding support for the above I realized you could also just:
     (js->clj (position "absolute" "-22px" "5px" "5px" "4px"))
     {:color "blue"}))
 
-the followin doesn't work yet:
-
-(defstyled mixme :section
-  (merge
-    (js->clj
-      #js[(position "absolute" "-22px" "5px" "5px" "4px")
-          (transitions "opacity 0.5s ease-in 0s")
-          (size "40px" "300px")
-          (borderStyle "solid" "dashed" "dotted" "double")])
-     {:background-color "lightblue"
-      :opacity 1
-      :font-size (em "16px")
-      ":hover" {:opacity 0.5}}))
+(defstyled a-mixin-component
+  (apply merge
+         (js->clj
+           #js[(position "absolute" "-22px" "5px" "5px" "4px")
+               (transitions "opacity 0.5s ease-in 0s")
+               (size "40px" "300px")
+               (borderStyle "solid" "dashed" "dotted" "double")]
+           {:background-color "lightblue"
+            :opacity          1
+            :font-size        (em "16px")
+            ":hover"          {:opacity 0.5}})))
 ```
 
-Because the keys come out as camelCase (e.g.: borderTopStyle), but support for
-that should be possible.
+So either of the these forms work for including style mixin objects.
 
 # Implementation notes
 

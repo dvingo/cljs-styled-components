@@ -44,6 +44,13 @@
                           #js {:theme theme-props})))
 
 #?(:cljs
+   (defn camel->kebab
+         "e.g. borderTopStyle -> border-top-style"
+         [a-str]
+         (let [words (re-seq #"[a-zA-Z][a-z]+" a-str)]
+              (string/join "-" (map #(string/lower-case %) words)))))
+
+#?(:cljs
    (defn map->template-str-args
          "Takes a map of css declaration properties to values, returns a vector containing
          two vectors: the static strings in the first, and the dynamic values in the second."
@@ -54,7 +61,13 @@
                      (cond
                        (and (keyword? k) (not= :styled/mixins k))
                        (keyword->css-str k)
-                       (string? k) (str k ":")
+
+                       (string? k)
+                       ;; If the key is cameCased, converted to kebab.
+                       (if (re-find #"[A-Z][a-z]+" k)
+                         (str (camel->kebab k) ":")
+                         (str k ":"))
+
                        :else k)]
                     (cond
 
