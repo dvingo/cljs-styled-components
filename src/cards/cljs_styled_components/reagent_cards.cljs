@@ -2,7 +2,7 @@
   (:require
     [devcards.core :as dc :refer-macros [defcard]]
     [reagent.core :as r]
-    [cljs-styled-components.reagent :refer [clj-props] :refer-macros [defstyled]]))
+    [cljs-styled-components.reagent :refer [clj-props theme-provider] :refer-macros [defstyled]]))
 
 (defstyled red :div
            {:color         "red"
@@ -74,6 +74,14 @@
 (defn example-10 []
       [just-content])
 
+(defstyled theme-user :div
+           {:color #(goog.object/getValueByKeys % "theme" "textColor")})
+
+(defn themes []
+      [theme-provider {:theme {:textColor "blue"}}
+       [:div
+        [theme-user "TEXT"]]])
+
 (defonce test-data (r/atom {:name "testing"}))
 
 (defcard testing-1 (dc/reagent example) test-data)
@@ -86,3 +94,4 @@
 (defcard testing-8 (dc/reagent example-8) test-data)
 (defcard testing-9 (dc/reagent example-9) test-data)
 (defcard testing-10 (dc/reagent example-10) test-data)
+(defcard theme-card (dc/reagent themes) test-data)

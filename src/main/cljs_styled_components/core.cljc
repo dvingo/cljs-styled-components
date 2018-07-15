@@ -7,10 +7,11 @@
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider clj-props* set-default-theme! clj-props-key debug]]]))
+          [element? factory-apply theme-provider* clj-props* set-default-theme! clj-props-key debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.core)))
 
 #?(:cljs (def clj-props clj-props*))
+#?(:cljs (def theme-provider theme-provider*))
 
 #?(:cljs
    (defn parse-props

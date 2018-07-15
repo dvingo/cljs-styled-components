@@ -32,7 +32,7 @@
          (fn [props & children]
              (apply react/createElement cls props children))))
 
-#?(:cljs (def theme-provider (factory-apply ThemeProvider)))
+#?(:cljs (def theme-provider* (factory-apply ThemeProvider)))
 
 #?(:cljs
    (defn clj-props* [f]

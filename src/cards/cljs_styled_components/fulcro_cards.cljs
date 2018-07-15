@@ -3,7 +3,7 @@
     [fulcro.client.primitives :as prim :refer [defsc]]
     [fulcro.client.dom :as dom]
     [devcards.core :as dc :refer-macros [defcard]]
-    ["polished" :refer [position size transitions em borderStyle]]
+    ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.core :refer [clj-props] :refer-macros [defstyled defkeyframes]]))
 
 (defstyled red :div
@@ -116,6 +116,12 @@
       (dom/div {:style {:position "relative"}}
                (mixme " hi ")))
 
+(defstyled img
+           :div
+           {:background-image "url(img.png)"
+            :styled/mixins (hideText)})
+
+
 ;(defcard testing-1 (example-1) {})
 ;(defcard testing-2 (example-2) {})
 ;(defcard testing-3 (example-3) {})
@@ -126,3 +132,5 @@
 ;(defcard testing-9 (example-9) {})
 ;(defcard animation (animation " hello "))
 (defcard mixins (mixins))
+(defcard mixins2 (dom/div (img "some text")))
+
