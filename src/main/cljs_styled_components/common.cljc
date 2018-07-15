@@ -5,11 +5,14 @@
         [["styled-components" :default styled :refer [keyframes ThemeProvider]]
          ["react" :as react]])))
 
+#?(:cljs
+   (defn debug [& args]
+         (when goog/DEBUG
+               (apply js/console.log args))))
+
 (def clj-props-key "styled$clj-props")
 
-(defn keyword->str [kw] (subs (str kw) 1))
-
-(defn keyword->css-str [kw] (str (subs (str kw) 1) ":"))
+(defn keyword->css-str [kw] (str (name kw) ":"))
 
 (defn join-last [avec astr]
   (if (empty? avec)
@@ -56,9 +59,9 @@
                       ;; A JS object in shape expected by styled components as produced by polished for example.
                       (= :styled/mixins key-val)
                       [(conj strs "")
-                       (vconcat args v)]
+                       (vconcat args (if (vector? v) v [v]))]
 
-                      (string? v)
+                      (or (string? v) (number? v))
                       [(join-last strs (str key-val v ";"))
                        args]
 

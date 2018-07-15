@@ -11,5 +11,8 @@
     "shadow-cljs": "^2.4.20",
     "showdown": "^1.8.6",
     "styled-components": "^3.3.3"
+  },
+  "devDependencies": {
+    "polished": "^1.9.3"
   }
 }

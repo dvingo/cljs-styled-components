@@ -1,13 +1,13 @@
 (ns cljs-styled-components.core
   (:require
     [clojure.string :as string]
-    [cljs-styled-components.common :refer [keyword->str keyword->css-str vconcat]]
+    [cljs-styled-components.common :refer [keyword->css-str vconcat]]
     #?@(:cljs
         [["styled-components" :default styled :refer [keyframes ThemeProvider]]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider clj-props* set-default-theme! clj-props-key]]]))
+          [element? factory-apply theme-provider clj-props* set-default-theme! clj-props-key debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.core)))
 
 #?(:cljs (def clj-props clj-props*))
@@ -17,10 +17,14 @@
          "Normalize the properties passed to support all the usual calling use cases."
          ;; Setup props and children for calling React.createElement
          [component-name orig-props orig-children]
-         (js/console.log "parse-props props: " orig-props)
-         (js/console.log "parse-props children: " orig-children)
+         (debug "parse-props props: " orig-props)
+         (debug "parse-props children: " orig-children)
          (let [[react-props clj-props children]
                (cond
+
+                 (nil? orig-props)
+                 [(js-obj) {} nil]
+
                  ;; Client code passed in an object as props or a single react element.
                  ;; possibly children as well
                  (object? orig-props)
@@ -28,7 +32,7 @@
                    (cond
                      ;; Only react elements were passed.
                      (vector? orig-children)
-                     [(js-obj) {} (conj [orig-props] orig-children)]
+                     [(js-obj) {} (vconcat [orig-props] orig-children)]
 
                      ;; Two react elements were passed
                      (element? orig-children)
@@ -56,7 +60,7 @@
               ;; We place the clj props under their own key so the styled component callbacks can be passed
               ;; a clojure map instead of a JS object.
               (goog.object/set react-props clj-props-key clj-props)
-              (js/console.log "parse-props returning: " react-props " children: " children)
+              (debug "parse-props returning: " react-props " children: " children)
               [react-props children])))
 
 #?(:cljs
@@ -64,26 +68,31 @@
          [component-name class]
          (with-meta
            (fn style-factory-apply*
+               ([]
+                 (let [[react-props children] (parse-props component-name nil nil)]
+                      (apply react/createElement class react-props children)))
+
                ;; Only props were passed
                ([orig-props]
-                (js/console.log "in arity 1 factory called with: " orig-props)
+                (debug "in arity 1 factory called with: " orig-props)
                 (let [[react-props children] (parse-props component-name orig-props nil)]
-                     ;(js/console.log "calling createElement with: "  react-props "children: " children)
+                     ;(debug "calling createElement with: "  react-props "children: " children)
                      (apply react/createElement class react-props [children])))
 
                ;; Props and children passed.
                ([orig-props orig-children]
-                (js/console.log "in arity 2 factory called with: " orig-props " children: " orig-children)
+                (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
                 (let [[react-props children] (parse-props component-name orig-props orig-children)]
-                     ;(js/console.log "in arity 2 creating element with: " react-props " children: " children)
+                     ;(debug "in arity 2 creating element with: " react-props " children: " children)
                      (apply react/createElement class react-props children)))
 
                ;; Mutliple children passed
                ([orig-props child-one & orig-children]
-                ;(js/console.log "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
+                (debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
                 (when-not (element? child-one)
                           (throw (js/Error. (str "Expected a React element after first arg for: " component-name))))
                 (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
+                     (debug "calling create el with: " children)
                      (apply react/createElement class react-props children))))
            {:styled-class class})))
 
@@ -91,6 +100,7 @@
 ;; Use of undeclared Var cljs-styled-components.core/styled
 
 #?(:cljs (def my-styled styled))
+#?(:cljs (def my-keyframes keyframes))
 
 (defmacro defstyled
 
@@ -99,12 +109,12 @@
 
   ([component-name styled tag-name style-map]
    `(let [orig-name# ~(str (-> &env :ns :name) "/" component-name)
-          ;~'_ (js/console.log " in defstyled - component name is: " orig-name# " ns-name: ")
-          ;~'_ (js/console.log "in defstyled - styled is " (~'js* "typeof ~{}" ~styled) ", " ~styled)
+          ;~'_ (debug " in defstyled - component name is: " orig-name# " ns-name: ")
+          ;~'_ (debug "in defstyled - styled is " (~'js* "typeof ~{}" ~styled) ", " ~styled)
           component-type# (cond
                             ;; a dom element like :div, same as styled.div``
                             ~(keyword? tag-name)
-                            (goog.object/get ~styled ~(keyword->str tag-name))
+                            (goog.object/get ~styled ~(name tag-name))
 
                             ;; Any React Component.
                             (-> ~tag-name meta :styled-class nil?)
@@ -114,6 +124,7 @@
                             :else
                             (goog.object/get (-> ~tag-name meta :styled-class) "extend"))
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~style-map)
+          ~'_ (cljs-styled-components.common/debug "template args: " template-dyn-args#)
           component-class# (.apply component-type#
                                    component-type#
                                    (apply cljs.core/array
@@ -127,5 +138,5 @@
 
 (defmacro defkeyframes [name animation-str]
   `(def ~name
-     ('`~keyframes
+     (my-keyframes
        (cljs.core/array ~animation-str))))

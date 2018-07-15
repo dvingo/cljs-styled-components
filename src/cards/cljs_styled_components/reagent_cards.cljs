@@ -7,7 +7,12 @@
 (defstyled red :div
            {:color         "red"
             :border        "1px solid blue"
-            :border-radius (clj-props #(if (:is-round? %) "10px" "0px"))})
+            :border-radius (clj-props #(if (:round? %) "10px" "0px"))})
+
+(defstyled just-content :div
+           {":before"
+            {:content "'hello'"
+             :width   "200px"}})
 
 (defn example []
       [red
@@ -21,7 +26,7 @@
 
 (defn example-3 []
       [:div
-       [red {:clj {:is-round? true}}
+       [red {:clj {:round? true}}
         [:p "some nested form"]
         [:p "antoher child"]]
        [red (helper "here is some text for you")]])
@@ -59,22 +64,25 @@
       )
 
 (defn example-8 []
-      [red {:clj {:is-round? true}}
+      [red {:clj {:round? true}}
        [:p "some nested form"]])
 
 (defn example-9 []
-      [red {:clj {:is-round? true}}
+      [red {:clj {:round? true}}
        "some nested form"])
 
+(defn example-10 []
+      [just-content])
 
 (defonce test-data (r/atom {:name "testing"}))
 
-;(defcard testing-1 (dc/reagent example) test-data)
-;(defcard testing-2 (dc/reagent example-2) test-data)
-;(defcard testing-3 (dc/reagent example-3) test-data)
-;(defcard testing-4 (dc/reagent example-4) test-data)
-;(defcard testing-5 (dc/reagent example-5) test-data)
-;(defcard testing-6 (dc/reagent example-6) test-data)
+(defcard testing-1 (dc/reagent example) test-data)
+(defcard testing-2 (dc/reagent example-2) test-data)
+(defcard testing-3 (dc/reagent example-3) test-data)
+(defcard testing-4 (dc/reagent example-4) test-data)
+(defcard testing-5 (dc/reagent example-5) test-data)
+(defcard testing-6 (dc/reagent example-6) test-data)
 (defcard testing-7 (dc/reagent example-7) test-data)
-;(defcard testing-8 (dc/reagent example-8) test-data)
-;(defcard testing-9 (dc/reagent example-9) test-data)
+(defcard testing-8 (dc/reagent example-8) test-data)
+(defcard testing-9 (dc/reagent example-9) test-data)
+(defcard testing-10 (dc/reagent example-10) test-data)
