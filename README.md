@@ -1,9 +1,34 @@
 # cljs-styled-components
 
-A ClojureScript interface to the venerable [styled-components](https://www.styled-components.com) library.
+A ClojureScript interface to the [styled-components](https://www.styled-components.com) library.
 
-The main interface of styled-components template strings is replaced by
-Clojure maps.
+The main interface of styled-components' template strings is replaced by
+ClojureScript maps.
+
+It's mostly a lightweight transformation from ClojureScript maps to the form
+that a template literal gets invoked with.
+
+In JS:
+
+```js
+const aVar = 'good';
+
+// These are equivalent:
+fn`this is a ${aVar} day`;
+fn([ 'this is a ', ' day' ], aVar);
+```
+
+So you could use styled components from ClojureScript directly by using the second
+form, but this library is an experiment in making it a bit nicer to work with
+from ClojureScript.
+
+You can read more about template literals here:
+
+https://www.styled-components.com/docs/advanced#tagged-template-literals
+
+and here:
+
+https://mxstbr.blog/2016/11/styled-components-magic-explained/
 
 # Installation
 
@@ -28,7 +53,11 @@ Then specify this library as a dependency:
 Add the dependency to your namespace form:
 
 ```clojure
+;; Plain React elements (e.g. used in fulcro):
 [cljs-styled-components.core :refer [defstyled defkeyframes theme-provider clj-props set-default-theme!]]
+
+;; For reagent support:
+[cljs-styled-components.reagent :refer [defstyled defkeyframes theme-provider clj-props set-default-theme!]]
 ```
 
 Here is a very simple usage:
@@ -46,9 +75,38 @@ const RowContainer = styled.div`
 const rowContainer = (props, children) => React.createElement(RowContainer, props, children)
 ```
 
-A more feature-full example:
+The first argument is the Var name that will be created, the second argument
+can be one of:
+  - a keyword will be invoked on the `styled` object
 
-```clj
+    ```clojure
+    (defstyled example1 :p {:color "blue"})
+    ```
+  - a styled component - as constructed with `defstyled`, this will use `.extend`
+
+    ```clojure
+    (defstyled example2 example1 {:border "1px solid"})
+    ```
+
+     https://www.styled-components.com/docs/basics#extending-styles
+  - any react component, which will invoke styled on the component
+
+    ```clojure
+    (defn my-component [props children]
+      (dom/div {:className (:className props)} children))
+
+    (defstyled example2 my-component {:border "1px solid"}).
+    ```
+
+    as described here:
+    https://www.styled-components.com/docs/advanced#styling-normal-react-components
+
+The third argument must be a ClojureScript map, this is computed at runtime
+so you can construct this map anyway you like.
+
+A more featureful example:
+
+```clojure
 (defstyled number-cell-styled
   :div
   {:background-color
@@ -77,17 +135,19 @@ A more feature-full example:
 (set-default-theme! number-cell-styled #js {:textColor "red"})
 ```
 
+Nested selectors are supported as shown in this example with media queries.
+
 ## Props
 
 Any property value that is a function will get passed the props that the component
 was rendered with.
 
-
 The props will be a JavaScript object, to make the code more cljs friendly the
 following custom is used:
 
 ```clojure
-;; At render time:
+;; At render time any data under the `:clj` key will remain as ClojureScript
+;; data structures.
 (dom/div {:clj {:round? true}})
 
 ;; Then pull them out with the helper `clj-props`
@@ -98,7 +158,9 @@ following custom is used:
 ```
 
 The top level map will converted to a JS object with (clj->js)
-(the `:clj` key is dissoced first).
+(the `:clj` key is dissoc'ed first).
+
+Example using JS data structures:
 
 ```clojure
 ;; render time:
@@ -132,14 +194,6 @@ so everything must be in JS data.
    [theme-user "hello"]]]
 ```
 
-## Style mixins
-
-This library play well with "mixins" such as [polished](https://github.com/styled-components/polished)
-
-```bash
-yarn add polished
-```
-
 ## Animations
 
 
@@ -164,7 +218,30 @@ yarn add polished
       (rotate-text txt))
 ```
 
-## Mixins
+## Style Mixins
+
+### CLJS Maps
+
+The styles are just maps so whatever code you want to combine them together:
+
+```clojure
+(def row
+  {:display "flex"
+   :justify-content "space-between"})
+
+(defstyled my-list :div
+ (merge
+   row
+   {:background "blue"}))
+ ```
+
+### JS Objects
+
+This library play well with "mixins" such as [polished](https://github.com/styled-components/polished)
+
+```bash
+yarn add polished
+```
 
 Support for nested objects of properties is included, for example, many of the
 mixins in polished (https://polished.js.org/docs/) have this shape:
@@ -206,6 +283,13 @@ a vector:
   {:background-image: "url(logo.png)"
    :sytled/mixins (hideText)})
 ```
+
+You could potentially also just:
+
+(defstyled my-component :div
+  (merge
+    (js->clj (position "absolute" "-22px" "5px" "5px" "4px"))
+    {:color "blue"}))
 
 # License
 

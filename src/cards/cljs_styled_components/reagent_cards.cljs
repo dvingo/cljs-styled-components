@@ -2,6 +2,7 @@
   (:require
     [devcards.core :as dc :refer-macros [defcard]]
     [reagent.core :as r]
+    ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.reagent :refer [clj-props theme-provider] :refer-macros [defstyled]]))
 
 (defstyled red :div
@@ -82,6 +83,18 @@
        [:div
         [theme-user "TEXT"]]])
 
+(def map-o-styles
+  {:color "turquoise"
+   :border "1px solid"})
+
+(js/console.log " size : " (js->clj (size "40px" "300px") :keywordize-keys true))
+
+(defstyled example-11
+           :div
+           (merge
+             (js->clj (size "40px" "300px"))
+             map-o-styles))
+
 (defonce test-data (r/atom {:name "testing"}))
 
 (defcard testing-1 (dc/reagent example) test-data)
@@ -95,3 +108,5 @@
 (defcard testing-9 (dc/reagent example-9) test-data)
 (defcard testing-10 (dc/reagent example-10) test-data)
 (defcard theme-card (dc/reagent themes) test-data)
+(defcard map-of-styles (dc/reagent
+                         [:div [example-11 "hi"]]) test-data)

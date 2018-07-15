@@ -51,9 +51,11 @@
          (reduce
            (fn [[strs args :as acc] [k v]]
                (let [key-val
-                     (if (and (keyword? k) (not= :styled/mixins k))
+                     (cond
+                       (and (keyword? k) (not= :styled/mixins k))
                        (keyword->css-str k)
-                       k)]
+                       (string? k) (str k ":")
+                       :else k)]
                     (cond
 
                       ;; A JS object in shape expected by styled components as produced by polished for example.
