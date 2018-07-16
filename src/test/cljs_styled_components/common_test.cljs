@@ -11,21 +11,29 @@
 (def sample-one
   (apply merge
          (js->clj
-           #js[(position "absolute" "-22px" "5px" "5px" "4px")
-               (transitions "opacity 0.5s ease-in 0s")
-               (size "40px" "300px")
-               (borderStyle "solid" "dashed" "dotted" "double")]
+           [(position "absolute" "-22px" "5px" "5px" "4px")
+            (transitions "opacity 0.5s ease-in 0s")
+            (size "40px" "300px")
+            (borderStyle "solid" "dashed" "dotted" "double")
+            {:background-color "lightblue"
+             :opacity          1
+             :font-size        (em "16px")
+             ":hover"          {:opacity 0.5}}])))
 
-           {:background-color "lightblue"
-            :opacity          1
-            :font-size        (em "16px")
-            ":hover"          {:opacity 0.5}})))
+(def expected
+  (str "border-right-style:dashed;width:300px;"
+       "right:5px;top:-22px;height:40px;font-size:1em;border-top-style:solid;"
+       "background-color:lightblue;border-left-style:double;"
+       "position:absolute;:hover: { opacity:0.5; }opacity:1;"
+       "border-bottom-style:dotted;bottom:5px;transition:opacity 0.5s ease-in 0s;left:4px;"))
 
 (deftest test-map->template-str-args
   (testing "It should work"
-    (let [out (map->template-str-args sample-one)]
-         (js/console.log "test out: " )
-         (pprint out))
-    (is (= 1 1))))
+           (let [[[strs] args] (map->template-str-args sample-one)
+                 light-blue (re-find #"lightblue" strs)]
+                (js/console.log "test out str: ")
+                (js/console.log "lightblue: " light-blue)
+                (pprint strs)
+                (is (= expected strs)))))
 
 (run-tests)

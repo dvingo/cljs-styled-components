@@ -261,7 +261,6 @@ a vector:
   {:background-image: "url(logo.png)"
    :sytled/mixins (hideText)})
 ```
-
 Sometime after adding support for the above I realized you could also just:
 
 ```clojure
@@ -270,17 +269,18 @@ Sometime after adding support for the above I realized you could also just:
     (js->clj (position "absolute" "-22px" "5px" "5px" "4px"))
     {:color "blue"}))
 
-(defstyled a-mixin-component
+```clojure
+(def sample-one
   (apply merge
          (js->clj
-           #js[(position "absolute" "-22px" "5px" "5px" "4px")
-               (transitions "opacity 0.5s ease-in 0s")
-               (size "40px" "300px")
-               (borderStyle "solid" "dashed" "dotted" "double")]
-           {:background-color "lightblue"
-            :opacity          1
-            :font-size        (em "16px")
-            ":hover"          {:opacity 0.5}})))
+           [(position "absolute" "-22px" "5px" "5px" "4px")
+            (transitions "opacity 0.5s ease-in 0s")
+            (size "40px" "300px")
+            (borderStyle "solid" "dashed" "dotted" "double")
+            {:background-color "lightblue"
+             :opacity          1
+             :font-size        (em "16px")
+             ":hover"          {:opacity 0.5}}])))
 ```
 
 So either of the these forms work for including style mixin objects.
@@ -309,12 +309,24 @@ and here:
 
 https://mxstbr.blog/2016/11/styled-components-magic-explained/
 
-# Running tests
+# Development
+
+Right now all dev is done in dev cards.
 
 ```bash
-yarn shadow-cljs compile test
+yarn start
 
-node resources/public/js/test/tests.js
+```
+Browse to:
+
+http://localhost:8023/cards.html
+
+## Run tests
+
+```bash
+# Optional but starts shadow cljs server for quicker test compile times.
+yarn start
+yarn test
 ```
 
 # License

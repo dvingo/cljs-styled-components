@@ -14,5 +14,9 @@
   },
   "devDependencies": {
     "polished": "^1.9.3"
+  },
+  "scripts": {
+    "start": "yarn shadow-cljs watch cards",
+    "test": "yarn shadow-cljs compile test && node resources/public/js/test/tests.js"
   }
 }

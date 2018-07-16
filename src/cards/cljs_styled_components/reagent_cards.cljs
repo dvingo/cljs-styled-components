@@ -50,8 +50,8 @@
        {:some-prop 5}
        [:p "child one"]
        [:p "child two"]
-       [:p "child three"]]
-      )
+       [:p "child three"]])
+
 
 (defn example-7 []
       [red
@@ -60,9 +60,9 @@
        [:p "child two"]
        [red "sub-red"]
        [:p "child three"]
-       [:p "child four"]
-       ]
-      )
+       [:p "child four"]])
+
+
 
 (defn example-8 []
       [red {:clj {:round? true}}
