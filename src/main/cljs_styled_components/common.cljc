@@ -39,7 +39,7 @@
          (fn [props] (f (goog.object/get props clj-props-key)))))
 
 #?(:cljs
-   (defn set-default-theme! [component-var theme-props]
+   (defn set-default-theme!* [component-var theme-props]
          (goog.object/set (-> component-var meta :react-component) "defaultProps"
                           #js {:theme theme-props})))
 

@@ -117,6 +117,14 @@
                (mixme " hi ")))
 
 
+;; Update the lib to support a vector instead of just a map.
+;; if you get a vector then
+
+;; Do something like this:
+;;
+;; (apply merge
+;;   (map map->template-str-args (js->clj args)))
+;;
 (defstyled
   mixme2 :section
   (apply merge

@@ -3,6 +3,7 @@
     [cljs.test :refer-macros [deftest is testing run-tests]]
     [cljs.pprint :refer [pprint]]
     ["polished" :refer [position size transitions em borderStyle hideText]]
+    [cljs-styled-components.core :refer [parse-props]]
     [cljs-styled-components.common
      :refer [map->template-str-args]]))
 
@@ -35,5 +36,13 @@
                 (js/console.log "lightblue: " light-blue)
                 (pprint strs)
                 (is (= expected strs)))))
+
+(deftest test-parse-props
+         (let [props #js {:key-one 5}
+               [out-props out-children] (parse-props "component name" props 2)]
+              (println "out-children: " out-children)
+              (is
+                (= (js->clj out-props) {"key-one" 5 "styled$clj-props" {}}))
+              (is (= out-children [2]))))
 
 (run-tests)

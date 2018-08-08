@@ -7,7 +7,7 @@
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider* clj-props* set-default-theme! clj-props-key debug]]]))
+          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.reagent)))
 
 #?(:cljs (def clj-props clj-props*))
@@ -17,6 +17,8 @@
          (apply theme-provider*
                 (clj->js props)
                 [(r/as-element children)])))
+
+#?(:cljs (def set-default-theme! set-default-theme!*))
 
 #?(:cljs
    (defn relement?

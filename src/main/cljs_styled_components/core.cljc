@@ -7,11 +7,12 @@
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider* clj-props* set-default-theme! clj-props-key debug]]]))
+          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.core)))
 
 #?(:cljs (def clj-props clj-props*))
 #?(:cljs (def theme-provider theme-provider*))
+#?(:cljs (def set-default-theme! set-default-theme!*))
 
 #?(:cljs
    (defn parse-props
@@ -45,8 +46,10 @@
 
                      :else
                      (throw (js/Error. (str "Unknown child type passed to " component-name))))
-                   ;; They only passed a JS object of props.
-                   [orig-props {} nil])
+                   ;; They only passed a JS object of props, wrap the children in a vector if needed.
+                   [orig-props
+                    {}
+                    (if (sequential? orig-children) orig-children [orig-children])])
 
                  ;; Client code passed in a clj map of props and possible children.
                  (map? orig-props)
