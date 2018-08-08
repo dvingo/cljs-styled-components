@@ -37,12 +37,20 @@
                 (pprint strs)
                 (is (= expected strs)))))
 
-(deftest test-parse-props
+(deftest test-parse-props-js
          (let [props #js {:key-one 5}
                [out-props out-children] (parse-props "component name" props 2)]
               (println "out-children: " out-children)
               (is
                 (= (js->clj out-props) {"key-one" 5 "styled$clj-props" {}}))
+              (is (= out-children [2]))))
+
+(deftest test-parse-props-cljs
+         (let [props {:key-one 5}
+               [out-props out-children] (parse-props "component name" props 2)]
+              (println "out-children: " out-children)
+              (is
+                (= (js->clj out-props) {"key-one" 5 "className" "component name" "styled$clj-props" {}}))
               (is (= out-children [2]))))
 
 (run-tests)

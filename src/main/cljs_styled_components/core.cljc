@@ -56,7 +56,7 @@
                  [(clj->js (assoc (dissoc orig-props :clj) :className component-name))
                   (or (:clj orig-props) {})
                   ;; Determine what children were passed
-                  (if (element? orig-children)
+                  (if (not (sequential? orig-children))
                     [orig-children]
                     orig-children)]
 

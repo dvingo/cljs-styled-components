@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.3] - 2018-08-07
+- Fix non-seq children passed to a component created with defstyled - missed a spot.
+
+[0.1.3]: https://github.com/your-name/cljs-styled-components/compare/0.1.2...0.1.3
+
 ## [0.1.2] - 2018-08-07
 - Fix non-seq children passed to a component created with defstyled.
 
