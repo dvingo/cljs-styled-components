@@ -126,7 +126,7 @@ following custom is used:
 ```clojure
 ;; At render time any data under the `:clj` key will remain as ClojureScript
 ;; data structures.
-(dom/div {:clj {:round? true}})
+(example {:clj {:round? true}})
 
 ;; Then pull them out with the helper `clj-props`
 (defstyled example :div
@@ -152,7 +152,6 @@ Example using JS data structures:
 
 This is essentially the unmodified theme code that styled-components uses,
 so everything must be in JS data.
-
 
 ```clojure
 (defstyled theme-user :div
@@ -200,7 +199,7 @@ so everything must be in JS data.
 
 ### CLJS Maps
 
-The styles are just maps so whatever code you want to combine them together:
+The styles are just maps so you can use whatever code you want to combine them together:
 
 ```clojure
 (def row
@@ -208,14 +207,14 @@ The styles are just maps so whatever code you want to combine them together:
    :justify-content "space-between"})
 
 (defstyled my-list :div
- (merge
-   row
-   {:background "blue"}))
+  (merge
+    row
+    {:background "blue"}))
  ```
 
 ### JS Objects
 
-This library play well with "mixins" such as [polished](https://github.com/styled-components/polished)
+This library plays well with "mixins" such as [polished](https://github.com/styled-components/polished)
 
 ```bash
 yarn add polished
