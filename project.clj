@@ -1,4 +1,4 @@
-(defproject cljs-styled-components "0.1.1"
+(defproject cljs-styled-components "0.1.2"
   :description "ClojureScript interface to styled-components"
   :url "http://github.com/dvingo/cljs-styled-components"
   :license {:name "MIT"
@@ -15,5 +15,3 @@
                                          [fulcrologic/fulcro "2.5.12"]
                                          [fulcrologic/fulcro-inspect "2.2.0-beta5"]
                                          [devcards "0.2.4" :exclusions [cljsjs/react cljsjs/react-dom]]]}})
-
-
