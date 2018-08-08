@@ -33,7 +33,7 @@
                  (if (element? orig-props)
                    (cond
                      ;; Only react elements were passed.
-                     (vector? orig-children)
+                     (sequential? orig-children)
                      [(js-obj) {} (vconcat [orig-props] orig-children)]
 
                      ;; Two react elements were passed
