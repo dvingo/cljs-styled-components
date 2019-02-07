@@ -2,7 +2,7 @@
   (:require
     [clojure.string :as string]
     #?@(:cljs
-        [["styled-components" :default styled :refer [keyframes ThemeProvider]]
+        [["styled-components" :refer [default keyframes ThemeProvider] :rename {default styled}]
          ["react" :as react]])))
 
 #?(:cljs
