@@ -23,7 +23,7 @@ npm i -D styled-components
 Then specify this library as a dependency:
 
 ```clj
-[cljs-styled-components "0.1.4"]
+[cljs-styled-components "0.1.5"]
 ```
 
 # Usage
