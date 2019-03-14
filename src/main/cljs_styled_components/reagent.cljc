@@ -94,34 +94,31 @@
 #?(:cljs
    (defn style-factory-apply
          [component-name class]
-         (with-meta
-           (fn style-factory-apply*
-               ([]
-                 (let [[react-props children] (parse-props component-name nil nil)]
-                      (apply react/createElement class react-props children))
-                 )
-               ;; Only props were passed
-               ([orig-props]
-                (debug "in arity 1 factory called with: " orig-props)
-                (let [[react-props children] (parse-props component-name orig-props nil)]
-                     ;(debug "calling createElement with: "  react-props "children: " children)
+         (fn style-factory-apply*
+             ([]
+               (let [[react-props children] (parse-props component-name nil nil)]
+                    (apply react/createElement class react-props children))
+               )
+             ;; Only props were passed
+             ([orig-props]
+               (debug "in arity 1 factory called with: " orig-props)
+               (let [[react-props children] (parse-props component-name orig-props nil)]
+                    ;(debug "calling createElement with: "  react-props "children: " children)
                     (apply react/createElement class react-props children)))
 
-               ;; Props and children passed.
-               ([orig-props orig-children]
-                (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
-                (let [[react-props children] (parse-props component-name orig-props orig-children)]
-                      ;(debug "in arity 2 creating element with: " react-props " children: " children)
-                     (apply react/createElement class react-props children)))
+             ;; Props and children passed.
+             ([orig-props orig-children]
+               (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
+               (let [[react-props children] (parse-props component-name orig-props orig-children)]
+                    ;(debug "in arity 2 creating element with: " react-props " children: " children)
+                    (apply react/createElement class react-props children)))
 
-               ([orig-props child-one & orig-children]
-                 ;(debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
-                (when-not (relement? child-one)
-                          (throw (js/Error. (str "Expected a Reagent element after first arg for: " component-name))))
-                (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
-                     (apply react/createElement class react-props children))))
-
-           {:styled-class class})))
+             ([orig-props child-one & orig-children]
+               ;(debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
+               (when-not (relement? child-one)
+                         (throw (js/Error. (str "Expected a Reagent element after first arg for: " component-name))))
+               (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
+                    (apply react/createElement class react-props children))))))
 
 ;; Without making a new var the compiler will give a warning
 ;; Use of undeclared Var cljs-styled-components.core/styled
@@ -143,13 +140,9 @@
                             ~(keyword? tag-name)
                             (goog.object/get ~styled ~(name tag-name))
 
-                            ;; Any React Component.
-                            (-> ~tag-name meta :styled-class nil?)
-                            (~styled ~tag-name)
-
                             ;; Another styled component.
                             :else
-                            (goog.object/get (-> ~tag-name meta :styled-class) "extend"))
+                            (~styled ~tag-name))
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~style-map)
           component-class# (.apply component-type#
                                    component-type#

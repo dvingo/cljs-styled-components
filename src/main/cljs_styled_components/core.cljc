@@ -3,7 +3,7 @@
     [clojure.string :as string]
     [cljs-styled-components.common :refer [keyword->css-str vconcat]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider] :rename {default styled}]
+        [["styled-components" :refer [default keyframes ThemeProvider css] :rename {default styled}]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
@@ -70,41 +70,41 @@
 #?(:cljs
    (defn style-factory-apply
          [component-name class]
-         (with-meta
-           (fn style-factory-apply*
-               ([]
-                 (let [[react-props children] (parse-props component-name nil nil)]
-                      (apply react/createElement class react-props children)))
 
-               ;; Only props were passed
-               ([orig-props]
-                (debug "in arity 1 factory called with: " orig-props)
-                (let [[react-props children] (parse-props component-name orig-props nil)]
-                     ;(debug "calling createElement with: "  react-props "children: " children)
-                     (apply react/createElement class react-props [children])))
+         (fn style-factory-apply*
+             ([]
+               (let [[react-props children] (parse-props component-name nil nil)]
+                    (apply react/createElement class react-props children)))
 
-               ;; Props and children passed.
-               ([orig-props orig-children]
-                (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
-                (let [[react-props children] (parse-props component-name orig-props orig-children)]
-                     ;(debug "in arity 2 creating element with: " react-props " children: " children)
-                     (apply react/createElement class react-props children)))
+             ;; Only props were passed
+             ([orig-props]
+               (debug "in arity 1 factory called with: " orig-props)
+               (let [[react-props children] (parse-props component-name orig-props nil)]
+                    ;(debug "calling createElement with: "  react-props "children: " children)
+                    (apply react/createElement class react-props [children])))
 
-               ;; Mutliple children passed
-               ([orig-props child-one & orig-children]
-                (debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
-                (when-not (element? child-one)
-                          (throw (js/Error. (str "Expected a React element after first arg for: " component-name))))
-                (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
-                     (debug "calling create el with: " children)
-                     (apply react/createElement class react-props children))))
-           {:styled-class class})))
+             ;; Props and children passed.
+             ([orig-props orig-children]
+               (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
+               (let [[react-props children] (parse-props component-name orig-props orig-children)]
+                    ;(debug "in arity 2 creating element with: " react-props " children: " children)
+                    (apply react/createElement class react-props children)))
 
-;; Without making a new var the compiler will give a warning
+             ;; Mutliple children passed
+             ([orig-props child-one & orig-children]
+               (debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
+               (when-not (element? child-one)
+                         (throw (js/Error. (str "Expected a React element after first arg for: " component-name))))
+               (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
+                    (debug "calling create el with: " children)
+                    (apply react/createElement class react-props children))))))
+
+;; Without making a new Var the compiler will give a warning
 ;; Use of undeclared Var cljs-styled-components.core/styled
 
 #?(:cljs (def my-styled styled))
 #?(:cljs (def my-keyframes keyframes))
+#?(:cljs (def my-css css))
 
 (defmacro defstyled
 
@@ -120,13 +120,9 @@
                             ~(keyword? tag-name)
                             (goog.object/get ~styled ~(name tag-name))
 
-                            ;; Any React Component.
-                            (-> ~tag-name meta :styled-class nil?)
-                            (~styled ~tag-name)
-
-                            ;; Another styled component.
+                            ;; Another styled component or a React component.
                             :else
-                            (goog.object/get (-> ~tag-name meta :styled-class) "extend"))
+                            (~styled ~tag-name))
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~style-map)
           ~'_ (cljs-styled-components.common/debug "template args: " template-dyn-args#)
           component-class# (.apply component-type#
@@ -140,7 +136,10 @@
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
-(defmacro defkeyframes [name animation-str]
-  `(def ~name
-     (my-keyframes
-       (cljs.core/array ~animation-str))))
+;;
+;; As of v4 we need to use the `css` helper. See:
+;;  https://www.styled-components.com/docs/basics#animations
+(defmacro defkeyframes [name animation-defn]
+  `(defn ~name [animation-params#]
+     (let [kf-name# (my-keyframes (cljs.core/array ~animation-defn))]
+       (my-css (cljs.core/array "" (str " " animation-params#)) kf-name#))))

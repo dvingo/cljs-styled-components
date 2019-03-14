@@ -92,14 +92,34 @@
   "from { transform: rotate(0deg);}
    to { transform: rotate(360deg); }")
 
-(defstyled rotate-text
+(defstyled rotate-text1
            :span
-           {:animation (str spin " 2s linear infinite")
+           {:animation (spin "2s linear infinite")
             :display "inline-block"
             :font-size "20px"})
 
-(defn animation [txt]
-      (rotate-text txt))
+(defn animation1 [txt]
+      (rotate-text1 txt))
+
+(def lex-time 20)
+
+(defstyled rotate-text2
+           :span
+           {:animation (spin (str lex-time "s linear infinite"))
+            :display   "inline-block"
+            :font-size "20px"})
+
+(defn animation2 [txt]
+      (rotate-text2 txt))
+
+(defstyled rotate-text3
+           :span
+           {:animation (clj-props (fn [a] (spin (str (:time a) "s linear infinite"))))
+            :display   "inline-block"
+            :font-size "20px"})
+
+(defn animation3 [txt]
+      (rotate-text3  {:clj {:time 10}} txt))
 
 (defstyled mixme :section
            {:background-color "lightblue"
@@ -153,6 +173,9 @@
 ;(defcard testing-8 (example-8) {})
 ;(defcard testing-9 (example-9) {})
 ;(defcard animation (animation " hello "))
+(defcard animation (animation1  " hello "))
+(defcard animation2-card (animation2  " hello "))
+(defcard animation3-card (animation3  " hello "))
 (defcard mixins (mixins))
 (defcard mixins3
          (dom/div (mixme2 "some text")))
