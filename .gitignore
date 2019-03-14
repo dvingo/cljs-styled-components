@@ -21,3 +21,4 @@ resources/private
 .shadow-cljs
 .nrepl-port
 .lein-failures
+yarn-error.log

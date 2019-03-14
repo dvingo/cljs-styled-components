@@ -140,7 +140,7 @@
                             ~(keyword? tag-name)
                             (goog.object/get ~styled ~(name tag-name))
 
-                            ;; Another styled component.
+                            ;; Another styled component or a React component.
                             :else
                             (~styled ~tag-name))
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~style-map)
