@@ -3,7 +3,7 @@
     [reagent.core :as r]
     [cljs-styled-components.common :refer [keyword->css-str vconcat]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider] :rename {default styled}]
+        [["styled-components" :refer [default keyframes ThemeProvider css] :rename {default styled}]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
@@ -125,6 +125,7 @@
 
 #?(:cljs (def my-styled styled))
 #?(:cljs (def my-keyframes keyframes))
+#?(:cljs (def my-css css))
 
 (defmacro defstyled
 
@@ -155,7 +156,15 @@
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
-(defmacro defkeyframes [name animation-str]
-  `(def ~name
-     (my-keyframes
-       (cljs.core/array ~animation-str))))
+;(defmacro defkeyframes [name animation-str]
+;  `(def ~name
+;     (my-keyframes
+;       (cljs.core/array ~animation-str))))
+
+;;
+;; As of v4 we need to use the `css` helper. See:
+;;  https://www.styled-components.com/docs/basics#animations
+(defmacro defkeyframes [name animation-defn]
+  `(defn ~name [animation-params#]
+     (let [kf-name# (my-keyframes (cljs.core/array ~animation-defn))]
+       (my-css (cljs.core/array "" (str " " animation-params#)) kf-name#))))

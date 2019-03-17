@@ -1,6 +1,26 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.6] - 2019-03-17
+- Update code to support breaking changes in Styled Components v4.
+  https://github.com/dvingo/cljs-styled-components/issues/2
+
+  Relase info here: https://www.styled-components.com/releases#v4.0.0-beta.0
+
+
+  Extending one styled component based on another no longer uses `extend`,
+  we just invoke `styled` with the base component now.
+
+  - Update the `keyframes` API to match the new call style.
+
+  >
+Keyframes is now implemented in a "lazy" manner: its styles will be injected with the render phase of components using them.
+
+>
+keyframes no longer returns an animation name, instead it returns an object which has method .getName() for the purpose of getting the animation name.
+
+[0.1.6]: https://github.com/dvingo/cljs-styled-components/compare/0.1.5...0.1.6
+
 ## [0.1.5] - 2019-02-07
 - Do not use shadow-cljs only syntax:
   https://github.com/dvingo/cljs-styled-components/issues/1

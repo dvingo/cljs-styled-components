@@ -3,7 +3,7 @@
     [devcards.core :as dc :refer-macros [defcard]]
     [reagent.core :as r]
     ["polished" :refer [position size transitions em borderStyle hideText]]
-    [cljs-styled-components.reagent :refer [clj-props theme-provider] :refer-macros [defstyled]]))
+    [cljs-styled-components.reagent :refer [clj-props theme-provider] :refer-macros [defstyled defkeyframes]]))
 
 (defstyled red :div
            {:color         "red"
@@ -95,6 +95,20 @@
              (js->clj (size "40px" "300px"))
              map-o-styles))
 
+(defkeyframes
+  spin
+  "from { transform: rotate(0deg);}
+   to { transform: rotate(360deg); }")
+
+(defstyled rotate-text1
+           :span
+           {:animation (spin "2s linear infinite")
+            :display "inline-block"
+            :font-size "20px"})
+
+(defn example-12 []
+      [rotate-text1 "hi"])
+
 (defonce test-data (r/atom {:name "testing"}))
 
 (defcard testing-1 (dc/reagent example) test-data)
@@ -107,6 +121,7 @@
 (defcard testing-8 (dc/reagent example-8) test-data)
 (defcard testing-9 (dc/reagent example-9) test-data)
 (defcard testing-10 (dc/reagent example-10) test-data)
+(defcard rotate-text1-card (dc/reagent example-12) test-data)
 (defcard theme-card (dc/reagent themes) test-data)
 (defcard map-of-styles (dc/reagent
                          [:div [example-11 "hi"]]) test-data)
