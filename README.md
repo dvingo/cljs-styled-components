@@ -70,8 +70,9 @@ can be one of:
   - any react component, which will invoke styled on the component
 
     ```clojure
-    (defn my-component [props children]
-      (dom/div {:className (:className props)} children))
+    (defn my-component [props]
+      (dom/div {:className (goog.object/get "className" props)}
+          (goog.object/get "children" props)))
 
     (defstyled example2 my-component {:border "1px solid"}).
     ```
@@ -79,8 +80,8 @@ can be one of:
     as described here:
     https://www.styled-components.com/docs/advanced#styling-normal-react-components
 
-The third argument must be a ClojureScript map, this is computed at runtime
-so you can construct this map any way you like.
+The third argument must be a ClojureScript map or a ClojureScript vector, this is computed at runtime
+so you can construct this map/vector any way you like.
 
 A more featureful example:
 
