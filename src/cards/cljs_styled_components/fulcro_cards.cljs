@@ -184,7 +184,6 @@
             bp-query           {:background "blue"}})
 
 (defn my-component [props]
-      (js/console.log "plain comp props: " props)
       (dom/div {:className (goog.object/get props "className")}
                (goog.object/get props "children")))
 

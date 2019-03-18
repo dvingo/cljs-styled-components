@@ -8,7 +8,7 @@
 
 #?(:cljs
    (defn debug [& args]
-         (when goog/DEBUG
+         (when false
                (apply js/console.log args))))
 
 (def clj-props-key "styled$clj-props")

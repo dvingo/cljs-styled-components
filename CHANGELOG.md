@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.8] - 2019-03-18
+
+- Turn off debug
+
+[0.1.8]: https://github.com/dvingo/cljs-styled-components/compare/0.1.7...0.1.8
+
 ## [0.1.7] - 2019-03-18
 
 - Fix bugs from previous update
