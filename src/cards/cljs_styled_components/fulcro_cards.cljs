@@ -4,7 +4,9 @@
     [fulcro.client.dom :as dom]
     [devcards.core :as dc :refer-macros [defcard]]
     ["polished" :refer [position size transitions em borderStyle hideText]]
-    [cljs-styled-components.core :refer [clj-props] :refer-macros [defstyled defkeyframes]]))
+    [cljs-styled-components.core
+     :refer [clj-props set-default-theme!]
+     :refer-macros [defstyled defkeyframes]]))
 
 (defstyled red :div
            {:color         "red"
@@ -87,6 +89,14 @@
 (defn example-9 []
       (just-content))
 
+(defstyled theme-consumer :div
+           {:color #(goog.object/getValueByKeys % "theme" "textColor")})
+
+(set-default-theme! theme-consumer #js {:textColor "yellow"})
+
+(defn example-10 []
+      (theme-consumer "hi"))
+
 (defkeyframes
   spin
   "from { transform: rotate(0deg);}
@@ -136,15 +146,6 @@
       (dom/div {:style {:position "relative"}}
                (mixme " hi ")))
 
-
-;; Update the lib to support a vector instead of just a map.
-;; if you get a vector then
-
-;; Do something like this:
-;;
-;; (apply merge
-;;   (map map->template-str-args (js->clj args)))
-;;
 (defstyled
   mixme2 :section
   (apply merge
@@ -158,25 +159,55 @@
             :font-size        (em "16px")
             ":hover"          {:opacity 0.5}})))
 
-;(defstyled img
-;           :div
-;           {:background-image "url(img.png)"
-;            :styled/mixins (hideText)})
-;(defcard mixins2 (dom/div (img "some text")))
+(defstyled img
+           :div
+           {:background-image "url(img.png)"
+            :styled/mixins (hideText)})
 
-;(defcard testing-1 (example-1) {})
-;(defcard testing-2 (example-2) {})
-;(defcard testing-3 (example-3) {})
-;(defcard testing-5 (example-5) {})
-;(defcard testing-6 (example-6) {})
-;(defcard testing-7 (example-7) {})
-;(defcard testing-8 (example-8) {})
-;(defcard testing-9 (example-9) {})
-;(defcard animation (animation " hello "))
+
+(defstyled example-11 :div
+           [(position "relative" "20px")
+             {:background "green"
+              :opacity 1
+              ":hover" [(transitions "opacity 1s ease-in 0s")
+                        {:background "blue"
+                         :opacity .5}]}])
+
+(defstyled example-12 :div
+           [{:background "red"}
+            {:font-size "20px"}])
+
+(def bp-query "@media (max-width: 700px)")
+
+(defstyled breakpoints :div
+           {"backgroundColor" "slategrey"
+            bp-query           {:background "blue"}})
+
+(defn my-component [props]
+      (js/console.log "plain comp props: " props)
+      (dom/div {:className (goog.object/get props "className")}
+               (goog.object/get props "children")))
+
+(defstyled extends-react-comp my-component {:border "1px solid"}).
+
+(defcard testing-1 (example-1) {})
+(defcard testing-2 (example-2) {})
+(defcard testing-3 (example-3) {})
+(defcard testing-5 (example-5) {})
+(defcard testing-6 (example-6) {})
+(defcard testing-7 (example-7) {})
+(defcard testing-8 (example-8) {})
+(defcard testing-9 (example-9) {})
+(defcard base-component-card (extends-react-comp "hi2") {})
+(defcard default-theme (example-10) {})
+(defcard mixins-with-vectors (example-11 "mixins with vectors"))
+(defcard mixins-with-vectors2 (example-12 "mixins with vectors"))
 (defcard animation (animation1  " hello "))
 (defcard animation2-card (animation2  " hello "))
 (defcard animation3-card (animation3  " hello "))
 (defcard mixins (mixins))
+(defcard hide-text-polished-mixin (dom/div (img "some text")))
 (defcard mixins3
          (dom/div (mixme2 "some text")))
 
+(defcard breakpoint-card (breakpoints "testing breakpoints "))

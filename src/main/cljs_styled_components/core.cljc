@@ -24,6 +24,9 @@
          (let [[react-props clj-props children]
                (cond
 
+                 (and (nil? orig-props) (not (nil? orig-children)))
+                 [(js-obj) {} orig-children]
+
                  (nil? orig-props)
                  [(js-obj) {} nil]
 
@@ -70,34 +73,35 @@
 #?(:cljs
    (defn style-factory-apply
          [component-name class]
+         (with-meta
+           (fn style-factory-apply*
+               ([]
+                 (let [[react-props children] (parse-props component-name nil nil)]
+                      (apply react/createElement class react-props children)))
 
-         (fn style-factory-apply*
-             ([]
-               (let [[react-props children] (parse-props component-name nil nil)]
-                    (apply react/createElement class react-props children)))
+               ;; Only props were passed
+               ([orig-props]
+                 (debug "in arity 1 factory called with: " orig-props)
+                 (let [[react-props children] (parse-props component-name orig-props nil)]
+                      (debug "calling createElement with: "  react-props "children: " children)
+                      (apply react/createElement class react-props [children])))
 
-             ;; Only props were passed
-             ([orig-props]
-               (debug "in arity 1 factory called with: " orig-props)
-               (let [[react-props children] (parse-props component-name orig-props nil)]
-                    ;(debug "calling createElement with: "  react-props "children: " children)
-                    (apply react/createElement class react-props [children])))
+               ;; Props and children passed.
+               ([orig-props orig-children]
+                 (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
+                 (let [[react-props children] (parse-props component-name orig-props orig-children)]
+                      (debug "in arity 2 creating element with: " react-props " children: " children)
+                      (apply react/createElement class react-props children)))
 
-             ;; Props and children passed.
-             ([orig-props orig-children]
-               (debug "in arity 2 factory called with: " orig-props " children: " orig-children)
-               (let [[react-props children] (parse-props component-name orig-props orig-children)]
-                    ;(debug "in arity 2 creating element with: " react-props " children: " children)
-                    (apply react/createElement class react-props children)))
-
-             ;; Mutliple children passed
-             ([orig-props child-one & orig-children]
-               (debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
-               (when-not (element? child-one)
-                         (throw (js/Error. (str "Expected a React element after first arg for: " component-name))))
-               (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
-                    (debug "calling create el with: " children)
-                    (apply react/createElement class react-props children))))))
+               ;; Mutliple children passed
+               ([orig-props child-one & orig-children]
+                 (debug "in arity 3 factory called with: " orig-props " child-one: " child-one " children: " orig-children)
+                 (when-not (element? child-one)
+                           (throw (js/Error. (str "Expected a React element after first arg for: " component-name))))
+                 (let [[react-props children] (parse-props component-name orig-props (vconcat [child-one] orig-children))]
+                      (debug "calling create el with: " children)
+                      (apply react/createElement class react-props children))))
+           {:styled-class class})))
 
 ;; Without making a new Var the compiler will give a warning
 ;; Use of undeclared Var cljs-styled-components.core/styled
@@ -120,7 +124,11 @@
                             ~(keyword? tag-name)
                             (goog.object/get ~styled ~(name tag-name))
 
-                            ;; Another styled component or a React component.
+                            ;; Another styled component
+                            (-> ~tag-name meta :styled-class)
+                            (~styled (-> ~tag-name meta :styled-class))
+
+                            ;; A React component
                             :else
                             (~styled ~tag-name))
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~style-map)

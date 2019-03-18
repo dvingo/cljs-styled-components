@@ -3,7 +3,9 @@
     [devcards.core :as dc :refer-macros [defcard]]
     [reagent.core :as r]
     ["polished" :refer [position size transitions em borderStyle hideText]]
-    [cljs-styled-components.reagent :refer [clj-props theme-provider] :refer-macros [defstyled defkeyframes]]))
+    [cljs-styled-components.reagent
+     :refer [clj-props theme-provider set-default-theme!]
+     :refer-macros [defstyled defkeyframes]]))
 
 (defstyled red :div
            {:color         "red"
@@ -78,6 +80,11 @@
 (defstyled theme-user :div
            {:color #(goog.object/getValueByKeys % "theme" "textColor")})
 
+(set-default-theme! theme-user #js {:textColor "yellow"})
+
+(defn theme-default []
+      [:div [theme-user "TEXT"]])
+
 (defn themes []
       [theme-provider {:theme {:textColor "blue"}}
        [:div
@@ -87,7 +94,9 @@
   {:color "turquoise"
    :border "1px solid"})
 
-(js/console.log " size : " (js->clj (size "40px" "300px") :keywordize-keys true))
+(comment
+  (js/console.log " size : " (js->clj (size "40px" "300px") :keywordize-keys true))
+  )
 
 (defstyled example-11
            :div
@@ -109,8 +118,25 @@
 (defn example-12 []
       [rotate-text1 "hi"])
 
+(defstyled example-13 :div
+           [(position "relative" "20px")
+            {:background "green"
+             :opacity 1
+             ":hover" [(transitions "opacity 1s ease-in 0s")
+                       {:background "blue"
+                        :opacity .5}]}])
+
+
+(def bp-query "@media (max-width: 700px)")
+
+(defstyled breakpoints :div
+           {"backgroundColor" "slategrey"
+            bp-query           {:background "blue"}})
+
 (defonce test-data (r/atom {:name "testing"}))
 
+(defcard nil-props-with-children  (dc/reagent (red nil "hi123")))
+(defcard just-children  (dc/reagent (red "hi456")))
 (defcard testing-1 (dc/reagent example) test-data)
 (defcard testing-2 (dc/reagent example-2) test-data)
 (defcard testing-3 (dc/reagent example-3) test-data)
@@ -123,5 +149,11 @@
 (defcard testing-10 (dc/reagent example-10) test-data)
 (defcard rotate-text1-card (dc/reagent example-12) test-data)
 (defcard theme-card (dc/reagent themes) test-data)
+(defcard theme-card-default (dc/reagent theme-default) test-data)
 (defcard map-of-styles (dc/reagent
                          [:div [example-11 "hi"]]) test-data)
+(defcard vetor-mixins (dc/reagent
+                         [:div [example-13 "hi"]]) test-data)
+
+(defcard breakpoint-card (dc/reagent
+                           [:div [breakpoints "testing breakpoints "]]))

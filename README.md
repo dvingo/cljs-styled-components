@@ -23,7 +23,7 @@ npm i -D styled-components
 Then specify this library as a dependency:
 
 ```clj
-[cljs-styled-components "0.1.6"]
+[cljs-styled-components "0.1.7"]
 ```
 
 # Usage
@@ -233,6 +233,27 @@ The styles are just maps so you can use whatever code you want to combine them t
     {:background "blue"}))
  ```
 
+### Vectors
+As a convenience you can also pass a vector of maps which will be merged for you:
+
+```clojure
+(defstyled example-12 :div
+           [{:background "red"}
+            {:font-size "20px"}])
+```
+
+Passing JavaScript objects is also supported, as well as in nested positions:
+
+```clojure
+(defstyled example-11 :div
+ [(position "relative" "20px")
+   {:background "green"
+    :opacity 1
+    ":hover" [(transitions "opacity 1s ease-in 0s")
+              {:background "blue"
+               :opacity .5}]}])
+```
+
 ### JS Objects
 
 This library plays well with "mixins" such as [polished](https://github.com/styled-components/polished)
@@ -348,6 +369,16 @@ http://localhost:8023/cards.html
 yarn start
 yarn test
 ```
+
+Deploy notes
+
+- Update readme version
+- Update project.clj version
+- Update changelog
+- git tag the current version
+- Git commit new code
+- push to remote
+- lein deploy
 
 # License
 

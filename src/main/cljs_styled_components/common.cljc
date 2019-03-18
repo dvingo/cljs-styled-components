@@ -2,7 +2,8 @@
   (:require
     [clojure.string :as string]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider] :rename {default styled}]
+        [["styled-components"
+          :refer [default keyframes ThemeProvider] :rename {default styled}]
          ["react" :as react]])))
 
 #?(:cljs
@@ -39,9 +40,10 @@
          (fn [props] (f (goog.object/get props clj-props-key)))))
 
 #?(:cljs
-   (defn set-default-theme!* [component-var theme-props]
-         (goog.object/set (-> component-var meta :react-component) "defaultProps"
-                          #js {:theme theme-props})))
+   (defn set-default-theme!* [component theme-props]
+         (let [styled-class (or (-> component meta :styled-class) component)]
+              (goog.object/set styled-class "defaultProps"
+                               #js {:theme theme-props}))))
 
 #?(:cljs
    (defn camel->kebab
@@ -51,70 +53,82 @@
               (string/join "-" (map #(string/lower-case %) words)))))
 
 #?(:cljs
+   (defn merge-vec-of-maps [vec-of-maps]
+         (apply merge (js->clj vec-of-maps))))
+
+#?(:cljs
    (defn map->template-str-args
          "Takes a map of css declaration properties to values, returns a vector containing
          two vectors: the static strings in the first, and the dynamic values in the second."
-         [amap]
-         (reduce
-           (fn [[strs args :as acc] [k v]]
-               (let [key-val
-                     (cond
-                       (and (keyword? k) (not= :styled/mixins k))
-                       (keyword->css-str k)
+         [amap-or-vec]
+         (let [amap (cond-> amap-or-vec (vector? amap-or-vec) merge-vec-of-maps)]
+              (reduce
+                (fn [[strs args :as acc] [k v]]
+                    (let [key-val
+                          (cond
+                            (and (keyword? k) (not= :styled/mixins k))
+                            (keyword->css-str k)
 
-                       (string? k)
-                       ;; If the key is cameCased, converted to kebab.
-                       (if (re-find #"[A-Z][a-z]+" k)
-                         (str (camel->kebab k) ":")
-                         (str k ":"))
+                            ;; Nested selector - do not append a ":" to the selector.
+                            (and (string? k)
+                                 (or (map? v) (vector? v)))
+                            k
 
-                       :else k)]
-                    (cond
+                            ;; If the key is camelCased, converted to kebab.
+                            ;; camelCased keys would come from JS mixins like polished "fontFamily" etc.
+                            ;; Append a ":" to the property as this will be part of the static part of the resultant template string.
+                            (string? k)
+                            (if (re-find #"[A-Z][a-z]+" k)
+                              (str (camel->kebab k) ":")
+                              (str k ":"))
 
-                      ;; A JS object in shape expected by styled components as produced by polished for example.
-                      (= :styled/mixins key-val)
-                      [(conj strs "")
-                       (vconcat args (if (vector? v) v [v]))]
+                            :else k)]
+                         (cond
 
-                      (or (string? v) (number? v))
-                      [(join-last strs (str key-val v ";"))
-                       args]
+                           ;; A JS object in shape expected by styled components as produced by polished for example.
+                           (= :styled/mixins key-val)
+                           [(conj strs "")
+                            (vconcat args (if (vector? v) v [v]))]
 
-                      ;; This adds support of nested selector queries, such as media query support or hover pseudo selectors.
-                      (map? v)
-                      (let [[nested-strs nested-args] (map->template-str-args v)]
-                           (if (string? key-val)
-                             (let [new-nested-str
-                                   ;; There are no dynamic args, just combine the strings and surround with braces.
-                                   (if (= (count nested-strs) 1)
-                                     (join-last strs
-                                                (string/join " "
-                                                             (conj (vconcat [key-val "{"] nested-strs)
-                                                                   "}")))
-                                     ;; There are dynamic args.
-                                     (vconcat (join-last strs (str key-val "{" (first nested-strs)))
-                                              (join-last (vec (rest nested-strs)) "}")))]
+                           (or (string? v) (number? v))
+                           [(join-last strs (str key-val v ";"))
+                            args]
 
-                                  [new-nested-str
-                                   (vconcat args nested-args)])
+                           ;; This adds support of nested selector queries, such as media query support or hover pseudo selectors.
+                           (or (map? v) (vector? v))
+                           (let [[nested-strs nested-args] (map->template-str-args v)]
+                                (if (string? key-val)
+                                  (let [new-nested-str
+                                        ;; There are no dynamic args, just combine the strings and surround with braces.
+                                        (if (= (count nested-strs) 1)
+                                          (join-last strs
+                                                     (string/join " "
+                                                                  (conj (vconcat [key-val "{"] nested-strs)
+                                                                        "}")))
+                                          ;; There are dynamic args.
+                                          (vconcat (join-last strs (str key-val "{" (first nested-strs)))
+                                                   (join-last (vec (rest nested-strs)) "}")))]
 
-                             (let [new-strs-vec
-                                   ;; if nested-strs count is one we have: ["css here..."]
-                                   ;; There are no dynamic args, just combine the strings and surround with braces.
-                                   ;; Leave a gap for the dynamic selector (the key is resolved at runtime).
-                                   (if (= (count nested-strs) 1)
-                                     (conj strs
-                                           (string/join " " (conj (vconcat ["{"] nested-strs) "}")))
-                                     ;; There are dynamic args.
-                                     (vconcat (conj strs (str "{" (first nested-strs)))
-                                              (join-last (vec (rest nested-strs)) "}")))]
+                                       [new-nested-str
+                                        (vconcat args nested-args)])
 
-                                  [new-strs-vec
-                                   (vconcat (conj args key-val) nested-args)])))
+                                  (let [new-strs-vec
+                                        ;; if nested-strs count is one we have: ["css here..."]
+                                        ;; There are no dynamic args, just combine the strings and surround with braces.
+                                        ;; Leave a gap for the dynamic selector (the key is resolved at runtime).
+                                        (if (= (count nested-strs) 1)
+                                          (conj strs
+                                                (string/join " " (conj (vconcat ["{"] nested-strs) "}")))
+                                          ;; There are dynamic args.
+                                          (vconcat (conj strs (str "{" (first nested-strs)))
+                                                   (join-last (vec (rest nested-strs)) "}")))]
 
-                      ;; Found a symbol or similar - supports using values from the lexical scope.
-                      :else
-                      [(conj (join-last strs key-val) ";")
-                       (conj args v)])))
-           [[] []]
-           amap)))
+                                       [new-strs-vec
+                                        (vconcat (conj args key-val) nested-args)])))
+
+                           ;; Found a symbol or similar - supports using values from the lexical scope.
+                           :else
+                           [(conj (join-last strs key-val) ";")
+                            (conj args v)])))
+                [[] []]
+                amap))))

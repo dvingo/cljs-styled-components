@@ -1,6 +1,14 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+## [0.1.67 - 2019-03-18
+
+- Fix bugs from previous update
+  - set-default-theme! was broken
+- Nested selectors like ":hover" were getting inserted in the stylesheet as  ":hover:{}",
+  fixed this scenario generally for nested selectors.
+- Add support for passing vectors of maps/JS objects
+
 ## [0.1.6] - 2019-03-17
 - Update code to support breaking changes in Styled Components v4.
   https://github.com/dvingo/cljs-styled-components/issues/2
