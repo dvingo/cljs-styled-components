@@ -378,6 +378,7 @@ Deploy notes
 - git tag the current version
 - git commit new code
 - push to remote
+- git push origin --tags
 - lein deploy
 
 # License
