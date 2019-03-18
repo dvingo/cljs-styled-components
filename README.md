@@ -376,7 +376,7 @@ Deploy notes
 - Update project.clj version
 - Update changelog
 - git tag the current version
-- Git commit new code
+- git commit new code
 - push to remote
 - lein deploy
 

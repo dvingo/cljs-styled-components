@@ -1,7 +1,7 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
-## [0.1.67 - 2019-03-18
+## [0.1.7] - 2019-03-18
 
 - Fix bugs from previous update
   - set-default-theme! was broken
@@ -9,12 +9,13 @@ All notable changes to this project will be documented in this file. This change
   fixed this scenario generally for nested selectors.
 - Add support for passing vectors of maps/JS objects
 
+[0.1.7]: https://github.com/dvingo/cljs-styled-components/compare/0.1.6...0.1.7
+
 ## [0.1.6] - 2019-03-17
 - Update code to support breaking changes in Styled Components v4.
   https://github.com/dvingo/cljs-styled-components/issues/2
 
   Relase info here: https://www.styled-components.com/releases#v4.0.0-beta.0
-
 
   Extending one styled component based on another no longer uses `extend`,
   we just invoke `styled` with the base component now.
