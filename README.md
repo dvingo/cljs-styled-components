@@ -71,8 +71,8 @@ can be one of:
 
     ```clojure
     (defn my-component [props]
-      (dom/div {:className (goog.object/get "className" props)}
-          (goog.object/get "children" props)))
+      (dom/div {:className (goog.object/get props "className")}
+          (goog.object/get props "children")))
 
     (defstyled example2 my-component {:border "1px solid"}).
     ```
