@@ -303,26 +303,23 @@ a vector:
   {:background-image: "url(logo.png)"
    :sytled/mixins (hideText)})
 ```
-Sometime after adding support for the above I realized you could also just:
+The library will merge JS objects and CLJS maps for you if you pass a vector like so:
 
 ```clojure
 (defstyled my-component :div
-  (merge
-    (js->clj (position "absolute" "-22px" "5px" "5px" "4px"))
-    {:color "blue"}))
+  [(position "absolute" "-22px" "5px" "5px" "4px")
+   {:color "blue"}])
 
-```clojure
-(def sample-one
-  (apply merge
-         (js->clj
-           [(position "absolute" "-22px" "5px" "5px" "4px")
-            (transitions "opacity 0.5s ease-in 0s")
-            (size "40px" "300px")
-            (borderStyle "solid" "dashed" "dotted" "double")
-            {:background-color "lightblue"
-             :opacity          1
-             :font-size        (em "16px")
-             ":hover"          {:opacity 0.5}}])))
+;;
+(defstyled sample :section
+  [(position "absolute" "-22px" "5px" "5px" "4px")
+   (transitions "opacity 0.5s ease-in 0s")
+   (size "40px" "300px")
+   (borderStyle "solid" "dashed" "dotted" "double")
+   {:background-color "lightblue"
+    :opacity          1
+    :font-size        (em "16px")
+    ":hover"          {:opacity 0.5}}])
 ```
 
 So either of the these forms work for including style mixin objects.
