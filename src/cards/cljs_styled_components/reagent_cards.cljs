@@ -133,6 +133,13 @@
            {"backgroundColor" "slategrey"
             bp-query           {:background "blue"}})
 
+(defstyled ampersand breakpoints
+  {"&&&"
+    {"backgroundColor" "purple"}})
+
+(defn override-example []
+  [ampersand "this is ampersand"])
+
 (defonce test-data (r/atom {:name "testing"}))
 
 (defcard nil-props-with-children  (dc/reagent (red nil "hi123")))
@@ -147,6 +154,7 @@
 (defcard testing-8 (dc/reagent example-8) test-data)
 (defcard testing-9 (dc/reagent example-9) test-data)
 (defcard testing-10 (dc/reagent example-10) test-data)
+(defcard testing-override (dc/reagent override-example) test-data)
 (defcard rotate-text1-card (dc/reagent example-12) test-data)
 (defcard theme-card (dc/reagent themes) test-data)
 (defcard theme-card-default (dc/reagent theme-default) test-data)
