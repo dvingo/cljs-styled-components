@@ -15,7 +15,7 @@ This library will require "styled-components" from node_modules.
 You can install it like so:
 
 ```bash
-yarn add styled-components
+yarn add -D styled-components
 # or
 npm i -D styled-components
 ```
