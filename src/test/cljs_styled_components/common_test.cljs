@@ -25,7 +25,7 @@
   (str "border-right-style:dashed;width:300px;"
        "right:5px;top:-22px;height:40px;font-size:1em;border-top-style:solid;"
        "background-color:lightblue;border-left-style:double;"
-       "position:absolute;:hover: { opacity:0.5; }opacity:1;"
+       "position:absolute;:hover { opacity:0.5; }opacity:1;"
        "border-bottom-style:dotted;bottom:5px;transition:opacity 0.5s ease-in 0s;left:4px;"))
 
 (deftest test-map->template-str-args
@@ -59,4 +59,3 @@
                 (= (js->clj out-props) {"className" "component name" "styled$clj-props" {}}))
               (is (= out-children [1 2 3]))))
 
-(run-tests)

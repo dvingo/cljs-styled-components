@@ -1,5 +1,4 @@
 *.class
-yarn.lock
 *.iml
 *.jar
 .idea

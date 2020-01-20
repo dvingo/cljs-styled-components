@@ -324,6 +324,38 @@ The library will merge JS objects and CLJS maps for you if you pass a vector lik
 
 So either of the these forms work for including style mixin objects.
 
+## Global styles
+
+You can use the macro `defglobalstyle' which takes the same arguments as defstyled except for the "type" of element
+as there is none, and delegates to `createGlobalStyle` of styled-components.
+
+see: https://styled-components.com/docs/api#createglobalstyle
+
+Example:
+
+```clojure
+;; require the macro:
+[cljs-styled-components.core :refer-macros [defglobalstyle]]
+[cljs-styled-components.reagent :refer-macros [defglobalstyle]]
+
+(defglobalstyle
+  my-global-styles
+  {".my-global-class" {:background "palevioletred"
+                       :border "2px dashed"
+                       :border-radius (clj-props #(if (:round %) "8px") "0")}})
+
+;; reagent
+(defn my-component []
+  [:div.my-global-class
+    [my-global-styles {:clj {:round true}}]
+    "This inserts global styles"])
+
+;; fulcro
+(dom/div {:className "my-global-class"}
+    (my-global-styles)
+    "This inserts global styles")
+```
+
 # Implementation notes
 
 In JS:
@@ -354,8 +386,8 @@ Right now all dev is done in dev cards.
 
 ```bash
 yarn start
-
 ```
+
 Browse to:
 
 http://localhost:8023/cards.html
@@ -383,4 +415,4 @@ Deploy notes
 
 MIT License.
 
-Copyright © 2019 Daniel Vingo.
+Copyright © 2020 Daniel Vingo.

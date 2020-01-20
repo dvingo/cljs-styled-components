@@ -1,12 +1,12 @@
 (ns cljs-styled-components.fulcro-cards
   (:require
-    [fulcro.client.primitives :as prim :refer [defsc]]
+    [fulcro.client.primitives :refer [defsc]]
     [fulcro.client.dom :as dom]
     [devcards.core :as dc :refer-macros [defcard]]
     ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.core
      :refer [clj-props set-default-theme!]
-     :refer-macros [defstyled defkeyframes]]))
+     :refer-macros [defstyled defkeyframes defglobalstyle]]))
 
 (defstyled red :div
            {:color         "red"
@@ -189,6 +189,10 @@
 
 (defstyled extends-react-comp my-component {:border "1px solid"}).
 
+(defglobalstyle
+  my-global-styles
+  {".my-global-class" {:background "palevioletred"}})
+
 (defcard testing-1 (example-1) {})
 (defcard testing-2 (example-2) {})
 (defcard testing-3 (example-3) {})
@@ -210,3 +214,8 @@
          (dom/div (mixme2 "some text")))
 
 (defcard breakpoint-card (breakpoints "testing breakpoints "))
+
+(defcard global-styles (dom/div {:className "my-global-class"}
+                                (my-global-styles)
+                                (dom/p "hello paragraph")
+                                "hello global styles"))

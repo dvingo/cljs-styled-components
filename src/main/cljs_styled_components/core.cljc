@@ -1,9 +1,8 @@
 (ns cljs-styled-components.core
   (:require
-    [clojure.string :as string]
     [cljs-styled-components.common :refer [keyword->css-str vconcat]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider css] :rename {default styled}]
+        [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle] :rename {default styled}]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
@@ -109,6 +108,7 @@
 #?(:cljs (def my-styled styled))
 #?(:cljs (def my-keyframes keyframes))
 #?(:cljs (def my-css css))
+#?(:cljs (def my-createGlobalStyle createGlobalStyle))
 
 (defmacro defstyled
 
@@ -117,8 +117,6 @@
 
   ([component-name styled tag-name style-map]
    `(let [orig-name# ~(str (-> &env :ns :name) "/" component-name)
-          ;~'_ (debug " in defstyled - component name is: " orig-name# " ns-name: ")
-          ;~'_ (debug "in defstyled - styled is " (~'js* "typeof ~{}" ~styled) ", " ~styled)
           component-type# (cond
                             ;; a dom element like :div, same as styled.div``
                             ~(keyword? tag-name)
@@ -144,8 +142,30 @@
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
+(defmacro defglobalstyle
+  [component-name style-arg]
+  `(let [orig-name#       ~(str (-> &env :ns :name) "/" component-name)
+         [template-str-args# template-dyn-args#] (cljs-styled-components.common/map->template-str-args ~style-arg)
+         component-class# (.apply my-createGlobalStyle my-createGlobalStyle
+                                  (apply cljs.core/array
+                                         (concat
+                                           [(apply cljs.core/array template-str-args#)]
+                                           template-dyn-args#)))]
+     (goog.object/set component-class# "displayName" orig-name#)
+     (def ~component-name
+       (style-factory-apply orig-name# component-class#))
+     (alter-meta! ~component-name assoc :react-component component-class#)))
+
+(comment
+  (macroexpand '(defstyled test :div {:background "blue"}))
+
+  (macroexpand
+    '(defglobalstyle
+       my-global-styles
+       {".my-global-class" {:background "palevioletred"}})))
+
 ;;
-;; As of v4 we need to use the `css` helper. See:
+;; As of v4 of styled-components we need to use the `css` helper. See:
 ;;  https://www.styled-components.com/docs/basics#animations
 (defmacro defkeyframes [name animation-defn]
   `(defn ~name [animation-params#]

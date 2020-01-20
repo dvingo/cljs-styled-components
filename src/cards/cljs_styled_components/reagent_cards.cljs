@@ -4,7 +4,7 @@
     [reagent.core :as r]
     ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.reagent
-     :refer [clj-props theme-provider set-default-theme!]
+     :refer [clj-props theme-provider set-default-theme! defglobalstyle]
      :refer-macros [defstyled defkeyframes]]))
 
 (defstyled red :div
@@ -14,7 +14,7 @@
 
 (defstyled just-content :div
            {":before"
-            {:content "'hello'"
+            {:content "'hello this is :before'"
              :width   "200px"}})
 
 (defn example []
@@ -54,7 +54,6 @@
        [:p "child two"]
        [:p "child three"]])
 
-
 (defn example-7 []
       [red
        {:some-prop 5}
@@ -63,8 +62,6 @@
        [red "sub-red"]
        [:p "child three"]
        [:p "child four"]])
-
-
 
 (defn example-8 []
       [red {:clj {:round? true}}
@@ -91,12 +88,8 @@
         [theme-user "TEXT"]]])
 
 (def map-o-styles
-  {:color "turquoise"
+  {:color  "turquoise"
    :border "1px solid"})
-
-(comment
-  (js/console.log " size : " (js->clj (size "40px" "300px") :keywordize-keys true))
-  )
 
 (defstyled example-11
            :div
@@ -112,7 +105,7 @@
 (defstyled rotate-text1
            :span
            {:animation (spin "2s linear infinite")
-            :display "inline-block"
+            :display   "inline-block"
             :font-size "20px"})
 
 (defn example-12 []
@@ -121,29 +114,34 @@
 (defstyled example-13 :div
            [(position "relative" "20px")
             {:background "green"
-             :opacity 1
-             ":hover" [(transitions "opacity 1s ease-in 0s")
-                       {:background "blue"
-                        :opacity .5}]}])
-
+             :opacity    1
+             ":hover"    [(transitions "opacity 1s ease-in 0s")
+                          {:background "blue"
+                           :opacity    .5}]}])
 
 (def bp-query "@media (max-width: 700px)")
 
 (defstyled breakpoints :div
            {"backgroundColor" "slategrey"
-            bp-query           {:background "blue"}})
+            bp-query          {:background "blue"}})
 
 (defstyled ampersand breakpoints
-  {"&&&"
-    {"backgroundColor" "purple"}})
+           {"&&&"
+            {"backgroundColor" "purple"}})
 
 (defn override-example []
-  [ampersand "this is ampersand"])
+      [ampersand "this is ampersand"])
 
 (defonce test-data (r/atom {:name "testing"}))
 
-(defcard nil-props-with-children  (dc/reagent (red nil "hi123")))
-(defcard just-children  (dc/reagent (red "hi456")))
+(defglobalstyle
+  my-global-styles
+  {".my-global-class" {:background "palevioletred"
+                       :border "2px dashed"
+                       :border-radius (clj-props #(if (:round %) "8px") "0")}})
+
+(defcard nil-props-with-children (dc/reagent (red nil "hi123")))
+(defcard just-children (dc/reagent (red "hi456")))
 (defcard testing-1 (dc/reagent example) test-data)
 (defcard testing-2 (dc/reagent example-2) test-data)
 (defcard testing-3 (dc/reagent example-3) test-data)
@@ -161,7 +159,10 @@
 (defcard map-of-styles (dc/reagent
                          [:div [example-11 "hi"]]) test-data)
 (defcard vetor-mixins (dc/reagent
-                         [:div [example-13 "hi"]]) test-data)
+                        [:div [example-13 "hi"]]) test-data)
 
-(defcard breakpoint-card (dc/reagent
-                           [:div [breakpoints "testing breakpoints "]]))
+(defcard global-styles-card
+         (dc/reagent
+           [:div.my-global-class
+            [my-global-styles {:clj {:round true}}]
+            "This card inserts global styles"]))
