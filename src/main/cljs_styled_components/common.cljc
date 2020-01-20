@@ -3,13 +3,15 @@
     [clojure.string :as string]
     #?@(:cljs
         [["styled-components"
-          :refer [default keyframes ThemeProvider] :rename {default styled}]
+          :refer [default keyframes ThemeProvider createGlobalStyle] :rename {default styled}]
          ["react" :as react]])))
+
+#?(:cljs (goog-define DEBUG false))
 
 #?(:cljs
    (defn debug [& args]
-         (when false
-               (apply js/console.log args))))
+         (when DEBUG
+               (apply js/console.log (concat ["[DEBUG]"] args)))))
 
 (def clj-props-key "styled$clj-props")
 

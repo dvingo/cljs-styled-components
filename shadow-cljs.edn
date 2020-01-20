@@ -1,15 +1,15 @@
 {:lein   {:profile "cljs"}
  :nrepl  {:port 9000}
- :builds {
-          :cards    {:target           :browser
-                     :output-dir       "resources/public/js/cards"
-                     :asset-path       "/js/cards"
-                     :compiler-options {:devcards true}
-                     :modules          {:main
-                                        {:entries [cljs-styled-components.cards]}}
-                     :devtools         {:after-load cljs-styled-components.cards/refresh
-                                        :http-root  "resources/public"
-                                        :http-port  8023}}
-          :test {:target :node-test
-                 :output-to "resources/public/js/test/tests.js"}}}
+ :builds {:cards {:target           :browser
+                  :output-dir       "resources/public/js/cards"
+                  :asset-path       "/js/cards"
+                  :compiler-options {:devcards true}
+                  :modules          {:main
+                                     {:entries [cljs-styled-components.cards]}}
+                  :dev              {:closure-defines {cljs-styled-components.common/DEBUG true}}
+                  :devtools         {:after-load cljs-styled-components.cards/refresh
+                                     :http-root  "resources/public"
+                                     :http-port  8023}}
+          :test  {:target    :node-test
+                  :output-to "resources/public/js/test/tests.js"}}}
 

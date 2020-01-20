@@ -6,14 +6,15 @@
   "license": "MIT",
   "dependencies": {
     "create-react-class": "^15.6.3",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
+    "react": "^16.8",
+    "react-dom": "^16.8",
+    "react-is": "^16.8",
     "shadow-cljs": "^2.8.16",
     "showdown": "^1.8.6",
-    "styled-components": "^4.1.3"
+    "styled-components": "^5.0.0"
   },
   "devDependencies": {
-    "polished": "^3.0.3"
+    "polished": "^3.4.2"
   },
   "scripts": {
     "start": "yarn shadow-cljs watch cards",

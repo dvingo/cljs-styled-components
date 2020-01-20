@@ -3,7 +3,7 @@
   :url "http://github.com/dvingo/cljs-styled-components"
   :license {:name "MIT"
             :url "https://opensource.org/licenses/MIT"}
-  :dependencies [[org.clojure/clojure "1.9.0"]]
+  :dependencies [[org.clojure/clojure "1.10.1"]]
 
   :source-paths ["src/main"]
   :resource-paths ["resources"]
