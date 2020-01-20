@@ -326,7 +326,7 @@ So either of the these forms work for including style mixin objects.
 
 ## Global styles
 
-You can use the macro `defglobalstyle' which takes the same arguments as defstyled except for the "type" of element
+You can use the macro `defglobalstyle` which takes the same arguments as defstyled except for the "type" of element
 as there is none, and delegates to `createGlobalStyle` of styled-components.
 
 see: https://styled-components.com/docs/api#createglobalstyle
