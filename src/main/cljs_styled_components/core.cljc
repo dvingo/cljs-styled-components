@@ -135,8 +135,7 @@
           props#          (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
           component-class# (.call component-type# component-type# props#)]
       (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name
-        (style-factory-apply orig-name# component-class#))
+      (def ~component-name (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
 (comment
@@ -149,8 +148,7 @@
                                :justify-content  "center"
                                :align-items      "center"
                                :border           (cond empty? "none" :else "1px solid")
-                               :background-color (cond empty? "none" :else "#e3e3e3")}))))
-  )
+                               :background-color (cond empty? "none" :else "#e3e3e3")})))))
 
 (defmacro defstyled
 
@@ -160,7 +158,11 @@
   ([component-name styled tag-name styles]
    `(let [orig-name#      ~(str (-> &env :ns :name) "/" component-name)
           component-type# ~(determine-type tag-name styled)
+          ;; component-class# (.call component-type# component-type# (clj->js styles))
+          ;; instead of template strings, may be able to use ^^
+          ;; would shorten the generated code.
           [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~styles)
+
           ~'_ (cljs-styled-components.common/debug "template args: " template-dyn-args#)
           component-class# (.apply component-type#
                                    component-type#
@@ -169,8 +171,7 @@
                                             [(apply cljs.core/array template-str-args#)]
                                             template-dyn-args#)))]
       (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name
-        (style-factory-apply orig-name# component-class#))
+      (def ~component-name (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
 (defmacro defglobalstyle
