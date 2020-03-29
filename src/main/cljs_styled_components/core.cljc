@@ -110,7 +110,9 @@
 #?(:cljs (def my-css css))
 #?(:cljs (def my-createGlobalStyle createGlobalStyle))
 
-(defn determine-type [tag-name styled]
+(defn determine-type
+  "Return code that will determine how to invoke the tag via styled"
+  [tag-name styled]
   `(cond
      ;; a dom element like :div, same as styled.div``
      ~(keyword? tag-name)
@@ -124,33 +126,61 @@
      :else
      (~styled ~tag-name)))
 
+(comment
+  (macroexpand
+    '(defstyled tempcell :div
+                (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
+                             {:width            width
+                              :height           height
+                              :display          "flex"
+                              :justify-content  "center"
+                              :align-items      "center"
+                              :border           (cond empty? "none" :else "1px solid")
+                              :background-color (cond empty? "none" :else "#e3e3e3")}))))
+  )
+
+
+(defmacro component-class [component-type template-str-args template-dyn-args]
+  `(.apply ~component-type
+           ~component-type
+           (apply cljs.core/array
+                  (concat
+                    [(apply cljs.core/array ~template-str-args)]
+                    ~template-dyn-args))))
+
 (defmacro defstyledfn
 
   ([component-name tag-name stylefn]
    `(defstyledfn ~component-name `~my-styled ~tag-name ~stylefn))
 
   ([component-name styled tag-name stylefn]
-   `(let [orig-name#      ~(str (-> &env :ns :name) "/" component-name)
-          component-type# ~(determine-type tag-name styled)
-          props#          (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
+   `(let [orig-name#       ~(str (-> &env :ns :name) "/" component-name)
+          component-type#  ~(determine-type tag-name styled)
+          props#           (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
           component-class# (.call component-type# component-type# props#)]
       (goog.object/set component-class# "displayName" orig-name#)
       (def ~component-name
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
 
-(comment
-  (macroexpand
-    '(defstyledfn tempcell :div
-                 (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
-                              {:width            width
-                               :height           height
-                               :display          "flex"
-                               :justify-content  "center"
-                               :align-items      "center"
-                               :border           (cond empty? "none" :else "1px solid")
-                               :background-color (cond empty? "none" :else "#e3e3e3")}))))
-  )
+(defmacro class-fn-component
+  [stylefn component-type]
+  `(let [props# (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))]
+     (.call ~component-type ~component-type props#)))
+
+(macroexpand '(component-class-fn a b))
+(comment (macroexpand '(component-class-fn (fn []) (block of code))))
+
+(defmacro template-str-component
+  [styles component-type]
+  `(let [[template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~styles)
+         ~'_ (cljs-styled-components.common/debug "dyn template args: " template-dyn-args#)
+         ~'_ (cljs-styled-components.common/debug "str template args: " template-str-args#)
+         ~'_ (js/console.log "str template argsNEW: " (first template-str-args#))
+         component-class# (component-class ~component-type template-str-args# template-dyn-args#)
+         ~'_ (cljs-styled-components.common/debug "component-class# " component-class#)]
+     component-class#) )
+(comment (macroexpand '(template-str-component {:background "red"} component-type)))
 
 (defmacro defstyled
 
@@ -158,20 +188,17 @@
    `(defstyled ~component-name `~my-styled ~tag-name ~styles))
 
   ([component-name styled tag-name styles]
-   `(let [orig-name#      ~(str (-> &env :ns :name) "/" component-name)
-          component-type# ~(determine-type tag-name styled)
-          [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~styles)
-          ~'_ (cljs-styled-components.common/debug "template args: " template-dyn-args#)
-          component-class# (.apply component-type#
-                                   component-type#
-                                   (apply cljs.core/array
-                                          (concat
-                                            [(apply cljs.core/array template-str-args#)]
-                                            template-dyn-args#)))]
+   `(let [styles#          ~styles
+          orig-name#       ~(str (-> &env :ns :name) "/" component-name)
+          component-type#  ~(determine-type tag-name styled)
+          component-class# (if (fn? styles#)
+                             (class-fn-component styles# component-type#)
+                             (template-str-component styles# component-type#))]
       (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name
-        (style-factory-apply orig-name# component-class#))
+      (def ~component-name (style-factory-apply orig-name# component-class#))
+      (js/console.log "styles: " styles#)
       (alter-meta! ~component-name assoc :react-component component-class#))))
+(comment (macroexpand '(defstyled test :div {:background "blue"})) )
 
 (defmacro defglobalstyle
   [component-name style-arg]
