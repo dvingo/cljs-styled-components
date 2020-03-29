@@ -15,7 +15,9 @@
 
 #?(:cljs
    (defn parse-props
-     "Normalize the properties passed to support all the usual calling use cases."
+     "Normalize the properties passed to support all the usual calling use cases.
+     Deal with the props that calling code passes at runtime
+     Returns 2-tuple of props and children to be passed to React.createElement"
      ;; Setup props and children for calling React.createElement
      [component-name orig-props orig-children]
      (debug "parse-props props: " orig-props)
@@ -148,22 +150,7 @@
                     [(apply cljs.core/array ~template-str-args)]
                     ~template-dyn-args))))
 
-(defmacro defstyledfn
-
-  ([component-name tag-name stylefn]
-   `(defstyledfn ~component-name `~my-styled ~tag-name ~stylefn))
-
-  ([component-name styled tag-name stylefn]
-   `(let [orig-name#       ~(str (-> &env :ns :name) "/" component-name)
-          component-type#  ~(determine-type tag-name styled)
-          props#           (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
-          component-class# (.call component-type# component-type# props#)]
-      (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name
-        (style-factory-apply orig-name# component-class#))
-      (alter-meta! ~component-name assoc :react-component component-class#))))
-
-(defmacro class-fn-component
+(defn class-fn-component
   [stylefn component-type]
   `(let [props# (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))]
      (.call ~component-type ~component-type props#)))
@@ -171,16 +158,25 @@
 (macroexpand '(component-class-fn a b))
 (comment (macroexpand '(component-class-fn (fn []) (block of code))))
 
-(defmacro template-str-component
+(defn template-str-component
   [styles component-type]
   `(let [[template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~styles)
-         ~'_ (cljs-styled-components.common/debug "dyn template args: " template-dyn-args#)
-         ~'_ (cljs-styled-components.common/debug "str template args: " template-str-args#)
-         ~'_ (js/console.log "str template argsNEW: " (first template-str-args#))
-         component-class# (component-class ~component-type template-str-args# template-dyn-args#)
-         ~'_ (cljs-styled-components.common/debug "component-class# " component-class#)]
-     component-class#) )
+         component-class# (component-class ~component-type template-str-args# template-dyn-args#)]
+     (cljs-styled-components.common/debug "dyn template args: " template-dyn-args#)
+     (cljs-styled-components.common/debug "str template args: " template-str-args#)
+     component-class#))
 (comment (macroexpand '(template-str-component {:background "red"} component-type)))
+
+(defn get-component-class
+  [styles component-type]
+  `(if (fn? ~styles)
+     ~(class-fn-component styles component-type)
+     ~(template-str-component styles component-type)))
+
+(defn setup-class [name component-name component-class]
+  `(do (goog.object/set ~component-class "displayName" ~name)
+    (def ~component-name (style-factory-apply ~name ~component-class))
+    (alter-meta! ~component-name assoc :react-component ~component-class)))
 
 (defmacro defstyled
 
@@ -188,31 +184,19 @@
    `(defstyled ~component-name `~my-styled ~tag-name ~styles))
 
   ([component-name styled tag-name styles]
-   `(let [styles#          ~styles
-          orig-name#       ~(str (-> &env :ns :name) "/" component-name)
-          component-type#  ~(determine-type tag-name styled)
-          component-class# (if (fn? styles#)
-                             (class-fn-component styles# component-type#)
-                             (template-str-component styles# component-type#))]
-      (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name (style-factory-apply orig-name# component-class#))
-      (js/console.log "styles: " styles#)
-      (alter-meta! ~component-name assoc :react-component component-class#))))
-(comment (macroexpand '(defstyled test :div {:background "blue"})) )
+   (let [component-type (determine-type tag-name styled)
+         name           (str (-> &env :ns :name) "/" component-name)
+         component-class (get-component-class styles component-type)]
+     (setup-class name  component-name component-class))))
+(comment (macroexpand '(defstyled test :div {:background "blue"})))
 
 (defmacro defglobalstyle
   [component-name style-arg]
-  `(let [orig-name#       ~(str (-> &env :ns :name) "/" component-name)
-         [template-str-args# template-dyn-args#] (cljs-styled-components.common/map->template-str-args ~style-arg)
-         component-class# (.apply my-createGlobalStyle my-createGlobalStyle
-                                  (apply cljs.core/array
-                                         (concat
-                                           [(apply cljs.core/array template-str-args#)]
-                                           template-dyn-args#)))]
-     (goog.object/set component-class# "displayName" orig-name#)
-     (def ~component-name
-       (style-factory-apply orig-name# component-class#))
-     (alter-meta! ~component-name assoc :react-component component-class#)))
+  (let [name (str (-> &env :ns :name) "/" component-name)]
+    `(let [component-class# ~(get-component-class style-arg 'cljs-styled-components.core/my-createGlobalStyle)]
+       (goog.object/set component-class# "displayName" ~name)
+       (def ~component-name (style-factory-apply ~name component-class#))
+       (alter-meta! ~component-name assoc :react-component component-class#))))
 
 (comment
   (macroexpand '(defstyled test :div {:background "blue"}))

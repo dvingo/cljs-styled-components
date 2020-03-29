@@ -6,7 +6,7 @@
     ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.core
      :refer [clj-props set-default-theme!]
-     :refer-macros [defstyled defstyledfn defkeyframes defglobalstyle]]))
+     :refer-macros [defstyled defkeyframes defglobalstyle]]))
 
 
 
@@ -148,18 +148,20 @@
       (dom/div {:style {:position "relative"}}
                (mixme " hi ")))
 
+;(defstyled mixme4 :section stuff)
+
 (defstyled
   mixme2 :section
   (apply merge
          (js->clj
-           #js[(position "absolute" "-22px" "5px" "5px" "4px")
+           [(position "absolute" "-22px" "5px" "5px" "4px")
                (transitions "opacity 0.5s ease-in 0s")
                (size "40px" "300px")
-               (borderStyle "solid" "dashed" "dotted" "double")]
-           {:background-color "lightblue"
-            :opacity          1
-            :font-size        (em "16px")
-            ":hover"          {:opacity 0.5}})))
+               (borderStyle "solid" "dashed" "dotted" "double")
+               {:background-color "lightblue"
+                :opacity          1
+                :font-size        (em "16px")
+                ":hover"          {:opacity 0.5}}])))
 
 (defstyled img
            :div
@@ -197,7 +199,19 @@
 
 (defn px [x] (str x "px"))
 (def cell-size 50)
-(defstyledfn tempcell :div
+(def get-styles
+  (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
+               {:width            (px width)
+                :height           (px height)
+                :display          "flex"
+                :justify-content  "center"
+                :align-items      "center"
+                :border           (cond empty? "none" :else "1px solid")
+                :background-color (cond empty? "none" :else "#e3e3e3")}))
+  )
+(defstyled fn-symbol :div get-styles)
+
+(defstyled tempcell :div
              (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
                           {:width            (px width)
                            :height           (px height)
@@ -207,12 +221,13 @@
                            :border           (cond empty? "none" :else "1px solid")
                            :background-color (cond empty? "none" :else "#e3e3e3")})))
 
-(defstyledfn breakpointsfn :div
+(defstyled breakpointsfn :div
              (fn [_]
                {"backgroundColor" "slategrey"
                 bp-query          {:background "blue"}}))
 
 (defcard testing-fn #(tempcell "HIIII") {})
+(defcard testing-fn-symbol #(fn-symbol "Function symbol") {})
 (defcard testing-fn-w-props #(tempcell {:clj {:width 10 :height 100}} "HIIII") {})
 (defcard breakpoints-fn  #(breakpointsfn "BREAK @ 700px") {})
 
@@ -233,8 +248,8 @@
 (defcard animation3-card (animation3  " hello "))
 (defcard mixins (mixins))
 (defcard hide-text-polished-mixin (dom/div (img "some text")))
-(defcard mixins3
-         (dom/div (mixme2 "some text")))
+(defcard mixins3 (dom/div (mixme2 "some text")))
+;(defcard mixins4 (dom/div (mixme4 "mixme 4 some text")))
 
 (defcard breakpoint-card (breakpoints "testing breakpoints "))
 
