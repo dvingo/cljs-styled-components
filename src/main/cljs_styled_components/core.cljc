@@ -111,18 +111,15 @@
 #?(:cljs (def my-createGlobalStyle createGlobalStyle))
 
 (defn determine-type [tag-name styled]
-  `(cond
-     ;; a dom element like :div, same as styled.div``
-     ~(keyword? tag-name)
-     (goog.object/get ~styled ~(name tag-name))
-
-     ;; Another styled component
-     (-> ~tag-name meta :styled-class)
-     (~styled (-> ~tag-name meta :styled-class))
-
-     ;; A React component
-     :else
-     (~styled ~tag-name)))
+  ;; a dom element like :div, same as styled.div``
+  (if (keyword? tag-name)
+    `(goog.object/get ~styled ~(name tag-name))
+    `(if
+       ;; Another styled component
+       (-> ~tag-name meta :styled-class)
+       (~styled (-> ~tag-name meta :styled-class))
+       ;; A React component
+       (~styled ~tag-name))))
 
 (defmacro defstyledfn
 
@@ -130,9 +127,9 @@
    `(defstyledfn ~component-name `~my-styled ~tag-name ~stylefn))
 
   ([component-name styled tag-name stylefn]
-   `(let [orig-name#      ~(str (-> &env :ns :name) "/" component-name)
-          component-type# ~(determine-type tag-name styled)
-          props#          (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
+   `(let [orig-name#       ~(str (-> &env :ns :name) "/" component-name)
+          component-type#  ~(determine-type tag-name styled)
+          props#           (fn [arg#] (cljs.core/clj->js (~stylefn arg#)))
           component-class# (.call component-type# component-type# props#)]
       (goog.object/set component-class# "displayName" orig-name#)
       (def ~component-name (style-factory-apply orig-name# component-class#))
@@ -141,14 +138,36 @@
 (comment
   (macroexpand
     '(defstyledfn tempcell :div
-                 (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
-                              {:width            width
-                               :height           height
-                               :display          "flex"
-                               :justify-content  "center"
-                               :align-items      "center"
-                               :border           (cond empty? "none" :else "1px solid")
-                               :background-color (cond empty? "none" :else "#e3e3e3")})))))
+                  (clj-props (fn [{:keys [width height empty?] :or {width cell-size height cell-size empty? false}}]
+                               {:width            width
+                                :height           height
+                                :display          "flex"
+                                :justify-content  "center"
+                                :align-items      "center"
+                                :border           (cond empty? "none" :else "1px solid")
+                                :background-color (cond empty? "none" :else "#e3e3e3")})))))
+
+(defn create-class-tmpl-strs*
+  [component-type template-str-args template-dyn-args]
+  `(.apply ~component-type ~component-type
+           (cljs.core/to-array
+             (concat
+               [(cljs.core/to-array ~template-str-args)]
+               ~template-dyn-args))))
+
+
+(defn add-fn-wrapper [component-type stylesfn]
+  `(let [props#
+         (fn [arg#]
+           ;; For now assume a map is returned, can later
+           ;; add support for vectors and merge them.
+           (let [cljs-val# (~stylesfn arg#)
+                 animation# (:animation cljs-val#)
+                 args# [cljs-val#]]
+
+             ))]
+         (.apply ~component-type ~component-type props#)
+     )
 
 (defmacro defstyled
 
@@ -156,23 +175,36 @@
    `(defstyled ~component-name `~my-styled ~tag-name ~styles))
 
   ([component-name styled tag-name styles]
-   `(let [orig-name#      ~(str (-> &env :ns :name) "/" component-name)
-          component-type# ~(determine-type tag-name styled)
-          ;; component-class# (.call component-type# component-type# (clj->js styles))
-          ;; instead of template strings, may be able to use ^^
-          ;; would shorten the generated code.
-          [template-str-args# template-dyn-args#] (~'cljs-styled-components.common/map->template-str-args ~styles)
+   (let [component-type    (gensym "component-type")
+         template-str-args (gensym "template-str-args")
+         template-dyn-args (gensym "template-dyn-args")
+         orig-name         (str (-> &env :ns :name) "/" component-name)
+         component-class   (gensym "component-class")
+         styles2           (gensym "styles2")
+         debug             'cljs-styled-components.common/debug]
+     `(let [~component-type ~(determine-type tag-name styled)
+            ~styles2 ~styles
+            ~component-class
+            (if (fn? ~styles2)
+              ;; Thought:
+              ;; you can update this callback to dissoc ":animation" first
+              ;; and then supply it as a second param using
+              ;; css helper.
+              (let [props# ;;(fn [arg#] (cljs.core/clj->js (~styles2 arg#)))
+                    props# ~(component-type add-fn-wrapper styles2)
+                    ]
+                )
+              (let [[~template-str-args ~template-dyn-args]
+                    (~'cljs-styled-components.common/map->template-str-args ~styles2)]
+                (~debug "THIS IS template dyn args: " ~template-dyn-args)
+                (~debug "template str arg s: " ~template-str-args)
+                ~(create-class-tmpl-strs* component-type template-str-args template-dyn-args)))]
+        (goog.object/set ~component-class "displayName" ~orig-name)
+        (def ~component-name (style-factory-apply ~orig-name ~component-class))
+        (alter-meta! ~component-name assoc :react-component ~component-class)))))
 
-          ~'_ (cljs-styled-components.common/debug "template args: " template-dyn-args#)
-          component-class# (.apply component-type#
-                                   component-type#
-                                   (apply cljs.core/array
-                                          (concat
-                                            [(apply cljs.core/array template-str-args#)]
-                                            template-dyn-args#)))]
-      (goog.object/set component-class# "displayName" orig-name#)
-      (def ~component-name (style-factory-apply orig-name# component-class#))
-      (alter-meta! ~component-name assoc :react-component component-class#))))
+(comment (macroexpand '(defstyled test :div {:background "blue"}))
+         (macroexpand '(defstyled test2 test {:background "blue"})))
 
 (defmacro defglobalstyle
   [component-name style-arg]
@@ -184,8 +216,7 @@
                                            [(apply cljs.core/array template-str-args#)]
                                            template-dyn-args#)))]
      (goog.object/set component-class# "displayName" orig-name#)
-     (def ~component-name
-       (style-factory-apply orig-name# component-class#))
+     (def ~component-name (style-factory-apply orig-name# component-class#))
      (alter-meta! ~component-name assoc :react-component component-class#)))
 
 (comment

@@ -63,7 +63,12 @@
          "Takes a map of css declaration properties to values, returns a vector containing
          two vectors: the static strings in the first, and the dynamic values in the second."
          [amap-or-vec]
-         (let [amap (cond-> amap-or-vec (vector? amap-or-vec) merge-vec-of-maps)]
+         (let [amap (cond-> amap-or-vec
+                            (fn? amap-or-vec)
+                            (amap-or-vec )
+                            (vector? amap-or-vec)
+                            merge-vec-of-maps
+                            )]
               (reduce
                 (fn [[strs args :as acc] [k v]]
                     (let [key-val

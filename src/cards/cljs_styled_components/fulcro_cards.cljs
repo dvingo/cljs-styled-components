@@ -9,7 +9,6 @@
      :refer-macros [defstyled defstyledfn defkeyframes defglobalstyle]]))
 
 
-
 (defstyled red :div
            {:color         "red"
             :border        "1px solid blue"
@@ -45,7 +44,6 @@
         (red {:clj {:round? true}}
              (dom/p "the border is rounded"))
         (red (helper "here is some text for you"))))
-
 
 (defn example-4 []
       (dom/div
