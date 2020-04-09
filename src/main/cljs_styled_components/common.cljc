@@ -134,3 +134,14 @@
                             (conj args v)])))
                 [[] []]
                 amap))))
+
+#?(:cljs
+   (defn clj-props->js
+     "1. Removes :clj key,
+      2. Adds a className of the component to the props. (could make this configurable) try setting a closure-define.
+      3. Converts cljs map to js object.
+      "
+     [component-name props]
+     (clj->js (-> (dissoc props :clj)
+                  (update :className #(if (nil? %) component-name (str component-name " " %))))))
+   )

@@ -9,9 +9,8 @@
   :resource-paths ["resources"]
 
   :profiles {:cljs       {:source-paths ["src/main" "src/test" "src/cards"]
-                          :dependencies [[binaryage/devtools "0.9.10"]
-                                         [thheller/shadow-cljs "2.4.17"]
-                                         [reagent "0.8.1" :exclusions [cljsjs/react]]
-                                         [fulcrologic/fulcro "2.5.12"]
-                                         [fulcrologic/fulcro-inspect "2.2.0-beta5"]
-                                         [devcards "0.2.4" :exclusions [cljsjs/react cljsjs/react-dom]]]}})
+                          :dependencies [[binaryage/devtools "1.0.0"]
+                                         [thheller/shadow-cljs "2.8.94"]
+                                         [reagent "0.10.0" :exclusions [cljsjs/react]]
+                                         [com.fulcrologic/fulcro "3.2.0"]
+                                         [devcards "0.2.6" :exclusions [cljsjs/react cljsjs/react-dom]]]}})

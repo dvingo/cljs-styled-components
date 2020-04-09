@@ -44,6 +44,13 @@
                 (= (js->clj out-props) {"key-one" 5 "styled$clj-props" {}}))
               (is (= out-children [2]))))
 
+(deftest test-parse-props-w-class-name
+  (let [props {:onClick nil :className "TEST"}
+        [out-props out-children] (parse-props "component" props "child")
+        [out-props2] (parse-props "component" (dissoc props :className) "child")]
+    (is (= (.-className out-props) "component TEST"))
+    (is (= (.-className out-props2) "component"))))
+
 (deftest test-parse-props-cljs
          (let [props {:key-one 5}
                [out-props out-children] (parse-props "component name" props 2)]
