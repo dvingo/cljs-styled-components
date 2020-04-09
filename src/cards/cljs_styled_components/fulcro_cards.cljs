@@ -24,6 +24,42 @@
 (defstyled big-red red
            {:font-size "24px"})
 
+(defcard extends-1 #(big-red {:className "TRYINg a classname"} "this is big red") {})
+
+(defstyled big-red2 big-red
+  {:font-size "4px"})
+(defcard extends-2
+         #(big-red2 "this is big red2") {})
+
+(defcard extends-1 #(big-red "this is big red") {})
+
+(def cell-size 50)
+(defn px [s] (str s "px"))
+
+(def c clj-props)
+
+(defstyled cell :div
+  {:width            (c #(or (:width %) (px cell-size)))
+   :height           (c #(or (:height %) (px cell-size)))
+   :display          "flex"
+   :justify-content  "center"
+   :align-items      "center"
+   :border           (c (fn [{:keys [empty?]}]
+                          (cond empty? "none" :else "1px solid")))
+   :background-color (c (fn [{:keys [empty?]}]
+                          (cond empty? "none" :else "#e3e3e3")))
+   ":hover"
+                     {:background "pink"}})
+(defcard cell #(cell "CELL"))
+
+(defstyled header-cell cell
+  {:background-color "#505050"
+   :border           "3px solid"
+   :color            "#eee"})
+
+(defcard header-cell #(header-cell "CELL"))
+
+
 (defstyled flexes :div
            (merge flex {:background "grey"}))
 

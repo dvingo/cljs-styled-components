@@ -390,7 +390,7 @@ yarn start
 
 Browse to:
 
-http://localhost:8023/cards.html
+http://localhost:8923/cards.html
 
 ## Run tests
 

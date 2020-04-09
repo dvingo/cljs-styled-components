@@ -42,7 +42,7 @@
 
 (defn example-5 []
       [:div
-       [red
+       [red {:className "EXAMPLE"}
         [:p "child one"]
         [:p "child two"]
         [:p "child three"]]])

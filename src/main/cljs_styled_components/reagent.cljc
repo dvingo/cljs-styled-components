@@ -81,7 +81,8 @@
 
                  ;; Client code passed in a clj map of props and possible children.
                  (map? orig-props)
-                 [(clj->js (assoc (dissoc orig-props :clj) :className component-name))
+                 [(clj->js (-> (dissoc orig-props :clj)
+                               (update :className #(if (nil? %) component-name (str component-name " " %) ))))
                   (or (:clj orig-props) {})
                   (parse-children orig-children)]
 

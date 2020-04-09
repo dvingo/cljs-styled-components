@@ -1,5 +1,5 @@
 {:lein   {:profile "cljs"}
- :nrepl  {:port 9000}
+ :nrepl  {:port 9002}
  :builds {:cards {:target           :browser
                   :output-dir       "resources/public/js/cards"
                   :asset-path       "/js/cards"
@@ -9,7 +9,7 @@
                   :dev              {:closure-defines {cljs-styled-components.common/DEBUG true}}
                   :devtools         {:after-load cljs-styled-components.cards/refresh
                                      :http-root  "resources/public"
-                                     :http-port  8023}}
+                                     :http-port  8923}}
           :test  {:target    :node-test
                   :output-to "resources/public/js/test/tests.js"}}}
 
