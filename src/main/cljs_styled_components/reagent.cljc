@@ -8,7 +8,8 @@
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key debug]]]))
+          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key
+           clj-props->js debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.reagent)))
 
 #?(:cljs (def clj-props clj-props*))

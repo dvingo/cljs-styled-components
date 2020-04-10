@@ -117,7 +117,7 @@
              :opacity    1
              ":hover"    [(transitions "opacity 1s ease-in 0s")
                           {:background "blue"
-                           :opacity    .5}]}])
+                           :opacity    0.5}]}])
 
 (def bp-query "@media (max-width: 700px)")
 
@@ -166,3 +166,5 @@
            [:div.my-global-class
             [my-global-styles {:clj {:round true}}]
             "This card inserts global styles"]))
+
+(defcard test-class-name (dc/reagent [example-11 {:className "Hello"} "This should have classname Hello"]))

@@ -1,12 +1,14 @@
 (ns cljs-styled-components.core
   (:require
-    [cljs-styled-components.common :refer [keyword->css-str vconcat clj-props->js]]
+    [cljs-styled-components.common :refer [keyword->css-str vconcat]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle] :rename {default styled}]
+        [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle]
+                              :rename {default styled}]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
-          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key debug]]]))
+          [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key
+           clj-props->js debug]]]))
   #?(:cljs (:require-macros cljs-styled-components.core)))
 
 #?(:cljs (def clj-props clj-props*))

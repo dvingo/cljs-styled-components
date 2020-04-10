@@ -143,5 +143,4 @@
       "
      [component-name props]
      (clj->js (-> (dissoc props :clj)
-                  (update :className #(if (nil? %) component-name (str component-name " " %))))))
-   )
+                  (update :className #(if (nil? %) component-name (str component-name " " %)))))))
