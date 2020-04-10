@@ -15,16 +15,14 @@ This library will require "styled-components" from node_modules.
 You can install it like so:
 
 ```bash
-yarn add -D styled-components
+yarn add styled-components
 # or
-npm i -D styled-components
+npm i styled-components
 ```
 
-Then specify this library as a dependency:
+Then specify this library as a dependency using lein, boot, deps:
 
-```clj
-[cljs-styled-components "0.1.9"]
-```
+[![Clojars Project](https://img.shields.io/clojars/v/cljs-styled-components.svg)](https://clojars.org/cljs-styled-components)
 
 # Usage
 
@@ -335,8 +333,8 @@ Example:
 
 ```clojure
 ;; require the macro:
-[cljs-styled-components.core :refer-macros [defglobalstyle]]
-[cljs-styled-components.reagent :refer-macros [defglobalstyle]]
+(:require [cljs-styled-components.core :refer-macros [defglobalstyle]])
+(:require [cljs-styled-components.reagent :refer-macros [defglobalstyle]])
 
 (defglobalstyle
   my-global-styles
@@ -356,7 +354,28 @@ Example:
     "This inserts global styles")
 ```
 
+## Props macro helper
+
+You can use the `sprops` macro to clean up accessing props.
+
+```clojure
+[cljs-styled-components.core :refer-macros [defstyled sprops]]
+;; or:
+[cljs-styled-components.reagent :refer-macros [defstyled sprops]]
+
+(defstyled use-props-macro :div
+  {:border-radius (sprops [round?] (if round? "4px" 0))})
+;; expands to:
+(defstyled use-props-macro :div
+  {:border-radius (clj-props (fn [{:keys [round?]}] (if round? "4px" 0)))})
+
+(dom/div {:clj {:round? true}} "use props")
+or
+[:div {:clj {:round? true}} "use props"]
+```
+
 # Implementation notes
+
 
 In JS:
 

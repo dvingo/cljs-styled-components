@@ -1,7 +1,7 @@
 (ns cljs-styled-components.reagent
   (:require
     [reagent.core :as r]
-    [cljs-styled-components.common :refer [keyword->css-str vconcat]]
+    [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro]]
     #?@(:cljs
         [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle]
                               :rename {default styled}]
@@ -184,3 +184,6 @@
   `(defn ~name [animation-params#]
      (let [kf-name# (my-keyframes (cljs.core/array ~animation-defn))]
        (my-css (cljs.core/array "" (str " " animation-params#)) kf-name#))))
+
+(defmacro sprops [ks body] (props-macro ks body))
+(macroexpand-1 '(sprops [hidden?] {:background (if hidden? "white" "black")}))

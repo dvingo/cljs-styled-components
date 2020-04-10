@@ -1,6 +1,15 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+[0.1.10]: https://github.com/dvingo/cljs-styled-components/compare/0.1.9...0.1.10
+
+## [0.1.10] - 2020-04-09
+
+- Bugfix: allow passing :className at runtime to a component.
+  It was getting overridden before.
+
+- Add `sprops` macro.
+
 ## [0.1.9] - 2020-01-20
 
 - Add defglobalstyle

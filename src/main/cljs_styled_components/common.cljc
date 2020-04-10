@@ -17,6 +17,13 @@
 
 (defn keyword->css-str [kw] (str (name kw) ":"))
 
+(defn props-macro
+  [ks body]
+  `(cljs-styled-components.core/clj-props
+     (fn [{:keys ~ks}]
+       ~body)))
+(comment (props-macro [hidden? round?] {:background (if hidden? "black" "white")}))
+
 (defn join-last [avec astr]
   (if (empty? avec)
     (conj avec astr)

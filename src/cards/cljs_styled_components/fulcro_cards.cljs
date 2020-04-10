@@ -6,13 +6,13 @@
     ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.core
      :refer [clj-props set-default-theme!]
-     :refer-macros [defstyled defkeyframes defglobalstyle]]))
-;
+     :refer-macros [defstyled defkeyframes defglobalstyle sprops]]))
+
 (defstyled red :div
   {:color         "red"
    :border        "1px solid blue"
    :border-radius (clj-props #(if (:round? %) "10px" "0px"))})
-;
+
 (defstyled just-content :div
   {":before"
    {:content "'hello'"
@@ -25,7 +25,7 @@
   {:font-size "24px"})
 
 (defcard extends-1 #(big-red {:className "TRYINg a classname"} "this is big red") {})
-;
+
 (defstyled big-red2 big-red
   {:font-size "4px"})
 (defcard extends-2
@@ -37,7 +37,7 @@
 (defn px [s] (str s "px"))
 
 (def c clj-props)
-;
+
 (defstyled cell :div
   {:width            (c #(or (:width %) (px cell-size)))
    :height           (c #(or (:height %) (px cell-size)))
@@ -101,7 +101,6 @@
   (red {:prop-one 5}
        (dom/p "child one")))
 
-
 (defn example-7 []
   (dom/div
     (dom/div "hello")
@@ -137,7 +136,7 @@
   spin
   "from { transform: rotate(0deg);}
    to { transform: rotate(360deg); }")
-;
+
 (defstyled rotate-text1
   :span
   {:animation (spin "2s linear infinite")
@@ -212,7 +211,7 @@
 (defstyled example-12 :div
   [{:background "red"}
    {:font-size "20px"}])
-;
+
 (def bp-query "@media (max-width: 700px)")
 
 (defstyled breakpoints :div
@@ -258,4 +257,13 @@
                                 (dom/p "hello paragraph")
                                 "hello global styles"))
 (defcard pass-class-name (example-12 {:className "TEST"} "this should have TEST as a className") {})
+
+(defstyled use-props-macro
+  :div
+  {:background (sprops [hidden?] (if hidden? "black" "palevioletred"))
+   :color      (sprops [hidden?] (if hidden? "white" "black"))})
+
+(defcard use-props-card
+         (use-props-macro {:clj {:hidden? true}} "This should be hidden") {})
+(defcard use-props-card (use-props-macro {:clj {:hidden? false}} "This should not be hidd22en") {})
 

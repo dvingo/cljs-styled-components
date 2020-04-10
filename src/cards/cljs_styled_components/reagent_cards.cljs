@@ -5,7 +5,7 @@
     ["polished" :refer [position size transitions em borderStyle hideText]]
     [cljs-styled-components.reagent
      :refer [clj-props theme-provider set-default-theme! defglobalstyle]
-     :refer-macros [defstyled defkeyframes]]))
+     :refer-macros [defstyled defkeyframes sprops]]))
 
 (defstyled red :div
            {:color         "red"
@@ -168,3 +168,12 @@
             "This card inserts global styles"]))
 
 (defcard test-class-name (dc/reagent [example-11 {:className "Hello"} "This should have classname Hello"]))
+
+(defstyled use-props-macro
+           :div
+           {:background (sprops [hidden?] (if hidden? "black" "palevioletred"))
+            :color      (sprops [hidden?] (if hidden? "white" "black"))})
+
+(defcard use-props-card
+         (dc/reagent [use-props-macro {:clj {:hidden? true}} "This should be white on black"]))
+(defcard use-props-card (dc/reagent [use-props-macro {:clj {:hidden? false}} "This should be black on palevioletred"]))
