@@ -424,11 +424,11 @@ Deploy notes
 - Update readme version
 - Update project.clj version
 - Update changelog
-- git tag the current version
 - git commit new code
+- git tag the current version
 - push to remote
 - git push origin --tags
-- lein deploy
+- lein deploy clojars
 
 # License
 
