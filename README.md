@@ -1,5 +1,17 @@
 # cljs-styled-components
 
+
+---
+_note_ 
+
+I made a similar library to this one built on top of emotion instead of styled-components.
+
+https://github.com/dvingo/cljs-emotion
+
+Emotion allows passing functions as children when defining styles and has built-in server-side rendering support.
+---
+
+
 A ClojureScript interface to the [styled-components](https://www.styled-components.com) library.
 
 The main interface of styled-components' template strings is replaced by
