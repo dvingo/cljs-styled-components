@@ -2,6 +2,7 @@
 
 
 ---
+
 _note_ 
 
 I made a similar library to this one built on top of emotion instead of styled-components.
@@ -9,6 +10,7 @@ I made a similar library to this one built on top of emotion instead of styled-c
 https://github.com/dvingo/cljs-emotion
 
 Emotion allows passing functions as children when defining styles and has built-in server-side rendering support.
+
 ---
 
 
