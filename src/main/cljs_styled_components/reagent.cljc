@@ -3,9 +3,9 @@
     [reagent.core :as r]
     [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle]
-                              :rename {default styled}]
+        [["styled-components" :as styled :refer [keyframes ThemeProvider css createGlobalStyle]]
          ["react" :as react]
+         [cljs-styled-components.core]
          [cljs-styled-components.common
           :refer
           [element? factory-apply theme-provider* clj-props* set-default-theme!* clj-props-key
@@ -127,7 +127,7 @@
 ;; Without making a new var the compiler will give a warning
 ;; Use of undeclared Var cljs-styled-components.reagent/styled
 
-#?(:cljs (def my-styled styled))
+#?(:cljs (def my-styled (.-default styled)))
 #?(:cljs (def my-keyframes keyframes))
 #?(:cljs (def my-css css))
 #?(:cljs (def my-createGlobalStyle createGlobalStyle))
@@ -186,4 +186,4 @@
        (my-css (cljs.core/array "" (str " " animation-params#)) kf-name#))))
 
 (defmacro sprops [ks body] (props-macro ks body))
-(macroexpand-1 '(sprops [hidden?] {:background (if hidden? "white" "black")}))
+#_(macroexpand-1 '(sprops [hidden?] {:background (if hidden? "white" "black")}))

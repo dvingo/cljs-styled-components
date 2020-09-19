@@ -1,0 +1,8 @@
+{:deps    {reagent                         {:mvn/version "0.10.0"
+                                            :exclusions  [cljsjs/react cljsjs/react-dom]}
+           com.bhauman/figwheel-main       {:mvn/version "0.2.11"}
+           com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
+           devcards                        {:mvn/version "0.2.7"}
+           com.fulcrologic/fulcro          {:mvn/version "3.3.5"}}
+ :paths   ["src/main" "src/cards" "resources" "target"]
+ :aliases {:fig {:main-opts ["-m" "figwheel.main" "-b" "dev" "-r"]}}}

@@ -2,8 +2,7 @@
   (:require
     [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro]]
     #?@(:cljs
-        [["styled-components" :refer [default keyframes ThemeProvider css createGlobalStyle]
-                              :rename {default styled}]
+        [["styled-components" :as styled :refer [keyframes ThemeProvider css createGlobalStyle]]
          ["react" :as react]
          [cljs-styled-components.common
           :refer
@@ -107,7 +106,7 @@
 ;; Without making a new Var the compiler will give a warning
 ;; Use of undeclared Var cljs-styled-components.core/styled
 
-#?(:cljs (def my-styled styled))
+#?(:cljs (def my-styled (.-default styled)))
 #?(:cljs (def my-keyframes keyframes))
 #?(:cljs (def my-css css))
 #?(:cljs (def my-createGlobalStyle createGlobalStyle))
@@ -176,4 +175,4 @@
 
 (defmacro sprops [ks body] (props-macro ks body))
 
-(macroexpand-1 '(sprops [hidden?] {:background (if hidden? "white" "black")}))
+#_(macroexpand-1 '(sprops [hidden?] {:background (if hidden? "white" "black")}))
