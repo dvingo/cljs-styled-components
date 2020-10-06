@@ -1,0 +1,3 @@
+^{:auto-bundle :webpack}
+{:main cljs-styled-components.cards
+ :devcards true}

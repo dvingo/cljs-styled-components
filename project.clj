@@ -13,7 +13,7 @@
                                          [thheller/shadow-cljs "2.8.94"]
                                          [thheller/shadow-cljsjs "0.0.21"]
                                          [reagent "0.10.0" :exclusions [cljsjs/react]]
-                                         [com.fulcrologic/fulcro "3.2.0"]
+                                         [com.fulcrologic/fulcro "3.3.5"]
                                          ;; using devcards 0.2.6 results in:
                                          ;failed to load devcards.system.js ReferenceError: React is not defined
                                          ;    at eval (system.cljs:321)

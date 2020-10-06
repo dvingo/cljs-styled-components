@@ -1,10 +1,11 @@
 (ns cljs-styled-components.common
   (:require
-    [clojure.string :as string]
-    #?@(:cljs
-        [["styled-components"
-          :refer [default keyframes ThemeProvider createGlobalStyle] :rename {default styled}]
-         ["react" :as react]])))
+   [clojure.string :as string]
+   #?@(:cljs
+       [["styled-components"
+         :as styled
+         :refer [keyframes ThemeProvider createGlobalStyle]]
+        ["react" :as react]])))
 
 #?(:cljs (goog-define DEBUG false))
 

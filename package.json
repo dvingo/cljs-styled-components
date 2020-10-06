@@ -15,7 +15,9 @@
     "styled-components": "^5.1.0"
   },
   "devDependencies": {
-    "polished": "^3.5.1"
+    "polished": "^3.5.1",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "start": "yarn shadow-cljs watch cards",

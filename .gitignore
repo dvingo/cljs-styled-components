@@ -21,3 +21,5 @@ resources/private
 .nrepl-port
 .lein-failures
 yarn-error.log
+.cpcache/
+.rebel_readline_history
