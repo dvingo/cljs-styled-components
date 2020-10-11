@@ -435,7 +435,6 @@ yarn test
 
 Deploy notes
 
-- Update readme version
 - Update project.clj version
 - Update changelog
 - git commit new code

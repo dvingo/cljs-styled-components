@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+[0.1.11]: https://github.com/dvingo/cljs-styled-components/compare/0.1.10...0.1.11
+
+## [0.1.11] - 2020-10-11
+
+- Add support for Figwheel main tooling.
+
 [0.1.10]: https://github.com/dvingo/cljs-styled-components/compare/0.1.9...0.1.10
 
 ## [0.1.10] - 2020-04-09
