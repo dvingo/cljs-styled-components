@@ -7,7 +7,7 @@
   "devDependencies": {
     "create-react-class": "^15.7.0",
     "highlight.js": "^10.4.1",
-    "marked": "^1.1.0",
+    "marked": "^4.0.10",
     "polished": "^3.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
