@@ -1,10 +1,11 @@
 (ns cljs-styled-components.reagent
   (:require
     [reagent.core :as r]
-    [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro]]
+    [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro obj-set obj-get]]
     #?@(:cljs
         [["styled-components" :as styled :refer [keyframes ThemeProvider css createGlobalStyle]]
          ["react" :as react]
+         [goog.object]
          [cljs-styled-components.core]
          [cljs-styled-components.common
           :refer
@@ -90,7 +91,7 @@
              :else [(js-obj) {} (if (coll? orig-props) orig-props [orig-props])])]
        ;; We place the clj props under their own key so the styled component callbacks can be passed
        ;; a clojure map instead of a JS object.
-       (goog.object/set react-props clj-props-key clj-props)
+       (obj-set react-props clj-props-key clj-props)
        (debug "parse-props returning: " react-props " children: " children)
        [react-props children])))
 
@@ -142,7 +143,7 @@
           component-type#  (cond
                              ;; a dom element like :div, same as styled.div``
                              ~(keyword? tag-name)
-                             (goog.object/get ~my-styled ~(name tag-name))
+                             (obj-get ~my-styled ~(name tag-name))
 
                              ;; Another styled component
                              (-> ~tag-name meta :styled-class)
@@ -158,7 +159,7 @@
                                           (concat
                                             [(apply cljs.core/array template-str-args#)]
                                             template-dyn-args#)))]
-      (goog.object/set component-class# "displayName" orig-name#)
+      (obj-set component-class# "displayName" orig-name#)
       (def ~component-name
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
@@ -172,7 +173,7 @@
                                          (concat
                                            [(apply cljs.core/array template-str-args#)]
                                            template-dyn-args#)))]
-     (goog.object/set component-class# "displayName" orig-name#)
+     (obj-set component-class# "displayName" orig-name#)
      (def ~component-name
        (style-factory-apply orig-name# component-class#))
      (alter-meta! ~component-name assoc :react-component component-class#)))

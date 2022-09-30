@@ -2,12 +2,17 @@
   (:require
    [clojure.string :as string]
    #?@(:cljs
-       [["styled-components"
+       [[goog.object]
+        ["styled-components"
          :as styled
          :refer [keyframes ThemeProvider createGlobalStyle]]
         ["react" :as react]])))
 
 #?(:cljs (goog-define DEBUG false))
+
+;; Used to prevent generated code from needing to require goog.object
+(defn obj-set [o k v] #?(:cljs (goog.object/set o k v) :clj  nil))
+(defn obj-get [o k] #?(:cljs (goog.object/get o k) :clj  nil))
 
 #?(:cljs
    (defn debug [& args]
@@ -47,12 +52,12 @@
 
 #?(:cljs
    (defn clj-props* [f]
-         (fn [props] (f (goog.object/get props clj-props-key)))))
+         (fn [props] (f (obj-get props clj-props-key)))))
 
 #?(:cljs
    (defn set-default-theme!* [component theme-props]
          (let [styled-class (or (-> component meta :styled-class) component)]
-              (goog.object/set styled-class "defaultProps"
+              (obj-set styled-class "defaultProps"
                                #js {:theme theme-props}))))
 
 #?(:cljs

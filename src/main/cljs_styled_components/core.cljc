@@ -1,6 +1,6 @@
 (ns cljs-styled-components.core
   (:require
-    [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro]]
+    [cljs-styled-components.common :refer [keyword->css-str vconcat props-macro obj-get obj-set]]
     #?@(:cljs
         [["styled-components" :as styled :refer [keyframes ThemeProvider css createGlobalStyle]]
          ["react" :as react]
@@ -66,7 +66,7 @@
              :else [(js-obj) {} orig-props])]
        ;; We place the clj props under their own key so the styled component callbacks can be passed
        ;; a clojure map instead of a JS object.
-       (goog.object/set react-props clj-props-key clj-props)
+       (obj-set react-props clj-props-key clj-props)
        (debug "parse-props returning: " react-props " children: " children)
        [react-props children])))
 
@@ -121,7 +121,7 @@
           component-type# (cond
                             ;; a dom element like :div, same as styled.div``
                             ~(keyword? tag-name)
-                            (goog.object/get ~styled ~(name tag-name))
+                            (obj-get ~styled ~(name tag-name))
 
                             ;; Another styled component
                             (-> ~tag-name meta :styled-class)
@@ -138,7 +138,7 @@
                                           (concat
                                             [(apply cljs.core/array template-str-args#)]
                                             template-dyn-args#)))]
-      (goog.object/set component-class# "displayName" orig-name#)
+      (obj-set component-class# "displayName" orig-name#)
       (def ~component-name
         (style-factory-apply orig-name# component-class#))
       (alter-meta! ~component-name assoc :react-component component-class#))))
@@ -152,7 +152,7 @@
                                          (concat
                                            [(apply cljs.core/array template-str-args#)]
                                            template-dyn-args#)))]
-     (goog.object/set component-class# "displayName" orig-name#)
+     (obj-set component-class# "displayName" orig-name#)
      (def ~component-name
        (style-factory-apply orig-name# component-class#))
      (alter-meta! ~component-name assoc :react-component component-class#)))

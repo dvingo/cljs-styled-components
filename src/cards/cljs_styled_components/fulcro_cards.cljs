@@ -7,7 +7,6 @@
     [cljs-styled-components.core
      :refer [clj-props set-default-theme!]
      :refer-macros [defstyled defkeyframes defglobalstyle sprops]]))
-
 (defstyled red :div
   {:color         "red"
    :border        "1px solid blue"
@@ -266,4 +265,3 @@
 (defcard use-props-card
          (use-props-macro {:clj {:hidden? true}} "This should be hidden") {})
 (defcard use-props-card (use-props-macro {:clj {:hidden? false}} "This should not be hidd22en") {})
-

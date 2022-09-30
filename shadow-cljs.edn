@@ -1,5 +1,5 @@
-{:lein   {:profile "cljs"}
- :nrepl  {:port 9002}
+{#_#_:lein   {:profile "cljs"}
+ :deps {:aliases [:dev]}
  :builds {:cards {:target           :browser
                   :output-dir       "resources/public/js/cards"
                   :asset-path       "/js/cards"
@@ -12,4 +12,3 @@
                                      :http-port  8923}}
           :test  {:target    :node-test
                   :output-to "resources/public/js/test/tests.js"}}}
-

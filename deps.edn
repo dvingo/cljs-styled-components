@@ -1,8 +1,13 @@
-{:deps    {reagent                         {:mvn/version "0.10.0"
-                                            :exclusions  [cljsjs/react cljsjs/react-dom]}
-           com.bhauman/figwheel-main       {:mvn/version "0.2.11"}
-           com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
-           devcards                        {:mvn/version "0.2.7"}
-           com.fulcrologic/fulcro          {:mvn/version "3.3.5"}}
- :paths   ["src/main" "src/cards" "resources" "target"]
- :aliases {:fig {:main-opts ["-m" "figwheel.main" "-b" "dev" "-r"]}}}
+{:deps    {reagent/reagent {:mvn/version "1.1.1"
+                            :scope       :provided
+                            :exclusions  [cljsjs/react cljsjs/react-dom]}}
+ :paths   ["src/main"]
+ :aliases {:fig {:main-opts ["-m" "figwheel.main" "-b" "dev" "-r"]}
+           :dev {:extra-paths ["src/test" "src/cards" "resources"]
+                 :extra-deps
+                 {binaryage/devtools              {:mvn/version "1.0.6"}
+                  thheller/shadow-cljs            {:mvn/version "2.16.10"}
+                  com.fulcrologic/fulcro          {:mvn/version "3.5.27"}
+                  com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
+                  com.bhauman/figwheel-main       {:mvn/version "0.2.18"}
+                  devcards/devcards               {:mvn/version "0.2.7"}}}}}
