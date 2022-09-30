@@ -3,6 +3,7 @@
     [devcards.core :as dc :refer-macros [defcard]]
     [reagent.core :as r]
     ["polished" :refer [position size transitions em borderStyle hideText]]
+    [goog.object]
     [cljs-styled-components.reagent
      :refer [clj-props theme-provider set-default-theme! defglobalstyle]
      :refer-macros [defstyled defkeyframes sprops]]))

@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
+[0.1.12]: https://github.com/dvingo/cljs-styled-components/compare/0.1.11...0.1.12
+
+## [0.1.12] - 2022-09-30
+
+- Add explicit goog.object import
+
 [0.1.11]: https://github.com/dvingo/cljs-styled-components/compare/0.1.10...0.1.11
 
 ## [0.1.11] - 2020-10-11
